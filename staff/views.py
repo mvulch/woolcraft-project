@@ -1,4 +1,3 @@
-from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import get_user_model
 from django.views.decorators.http import require_POST
 from django.shortcuts import render, get_object_or_404, redirect
@@ -17,13 +16,14 @@ from django.db import transaction
 from django.db.models import F, Q, Sum
 from accounts.models import UserNotification
 from accounts.utils import notify_user
-from .utils import superuser_required
+from .utils import superuser_required, staff_required
+from django.conf import settings
 
 User = get_user_model()
 
 
 # Create your views here.
-@staff_member_required
+@staff_required
 def staff_dashboard_view(request):
     contact_messages = ContactMessage.objects.filter(is_resolved=False).count()
     orders = Order.objects.filter(status=Order.OrderStatus.PAID).count()
@@ -48,7 +48,7 @@ def staff_dashboard_view(request):
     }
     return render(request, 'staff/staff_dashboard.html', context)
 
-@staff_member_required
+@staff_required
 def staff_contact_messages_list_view(request):
     staff_contact_messages = ContactMessage.objects.select_related('user').all()
     filter_resolvance = request.GET.get('filter', '')
@@ -59,7 +59,7 @@ def staff_contact_messages_list_view(request):
     #elif filter_resolvance == 'all':
     #    contact_messages = contact_messages.all()
 
-    paginator = Paginator(staff_contact_messages, 2)
+    paginator = Paginator(staff_contact_messages, settings.PAGE_ITEMS)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     context = {
@@ -69,13 +69,13 @@ def staff_contact_messages_list_view(request):
     }
     return render(request,'communication/contact_messages.html', context)
 
-@staff_member_required
+@staff_required
 def staff_orders_list_view(request):
     orders = Order.objects.select_related('user', 'address').order_by('-created_at')
     filter_status = request.GET.get('status','')
     if filter_status:
         orders = orders.filter(status=filter_status)
-    paginator = Paginator(orders, 2)
+    paginator = Paginator(orders, settings.PAGE_ITEMS)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     context = {
@@ -86,7 +86,7 @@ def staff_orders_list_view(request):
     }
     return render(request,'orders/order_list.html', context)
 
-@staff_member_required
+@staff_required
 def staff_order_detail_view(request, order_id):
     order = get_object_or_404(Order.objects.select_related('user','address').prefetch_related('items__product'),
          id=order_id)
@@ -120,7 +120,7 @@ def staff_order_detail_view(request, order_id):
     context = {'order': order, 'is_staff_view': True, 'timeline': build_order_timeline(order)}
     return render(request, 'orders/order_detail.html', context)
 
-@staff_member_required
+@staff_required
 def notifications_view(request):
     notification_recipient = NotificationRecipient.objects.filter(
         recipient=request.user).select_related('notification').order_by('-notification__created_at')
@@ -132,7 +132,7 @@ def notifications_view(request):
         notification_recipient = notification_recipient.filter(is_read=False)
     elif filter_read == 'read':
         notification_recipient = notification_recipient.filter(is_read=True)
-    paginator = Paginator(notification_recipient, 2)
+    paginator = Paginator(notification_recipient, settings.PAGE_ITEMS)
     page_obj = paginator.get_page(request.GET.get('page'))
     context = {
         'page_obj':page_obj,
@@ -142,7 +142,7 @@ def notifications_view(request):
     }
     return render(request, 'staff/notifications.html', context)
 
-@staff_member_required
+@staff_required
 def notification_is_read_view(request, notification_id):
     notification_recipient = get_object_or_404(NotificationRecipient, notification__id=notification_id, recipient=request.user)
     notification_recipient.is_read=True
@@ -151,7 +151,7 @@ def notification_is_read_view(request, notification_id):
         return redirect(notification_recipient.notification.link)
     return redirect('staff:staff_notifications')
 
-@staff_member_required
+@staff_required
 def reviews_view(request):
     reviews_list = ProductReview.objects.select_related('user', 'product')
     filter_type = request.GET.get('filter', 'all')
@@ -161,7 +161,7 @@ def reviews_view(request):
         reviews_list = reviews_list.filter(is_published=True)
     elif filter_type == 'rejected':
         reviews_list = reviews_list.filter(is_rejected=True)
-    paginator = Paginator(reviews_list, 2)
+    paginator = Paginator(reviews_list, settings.PAGE_ITEMS)
     page_obj = paginator.get_page(request.GET.get('page'))
     context = {
         'page_obj':page_obj,
@@ -169,7 +169,7 @@ def reviews_view(request):
     }
     return render(request, 'staff/staff_reviews_list.html', context)
 
-@staff_member_required
+@staff_required
 def review_approve_view(request, review_id):
     review = get_object_or_404(ProductReview.objects.select_related('user', 'product__category'), id=review_id)
     if request.method == 'POST':
@@ -207,13 +207,13 @@ def review_approve_view(request, review_id):
     context = {'review': review, 'total_rejections': total_rejections}
     return render(request, 'staff/staff_review_detail.html', context)
 
-@staff_member_required
+@staff_required
 def custom_requests_list_view(request):
     filter_status = request.GET.get('status','')
     custom_requests = CustomRequest.objects.select_related('user').order_by('-created_at')
     if filter_status:
         custom_requests = custom_requests.filter(status=filter_status)
-    paginator = Paginator(custom_requests, 2)
+    paginator = Paginator(custom_requests, settings.PAGE_ITEMS)
     page_obj = paginator.get_page(request.GET.get('page'))
     context = {
         'page_obj': page_obj,
@@ -235,7 +235,7 @@ def manage_staff_view(request):
     else:
         users = User.objects.filter(is_staff=True)
     users = users.order_by('email')
-    paginator = Paginator(users, 10)
+    paginator = Paginator(users, settings.PAGE_ITEMS)
     page_obj = paginator.get_page(request.GET.get('page'))
     context = {
         'page_obj': page_obj,
@@ -265,7 +265,7 @@ def toggle_staff_status_view(request, user_id):
             messages.success(request, f'{target.email} вече не е част от персонала.')
             notify_user(user=target, type=UserNotification.Type.STAFF_STATUS,
                         message='Вече не сте част от екипа на WoolCraft и достъпът Ви до административния панел е премахнат.',
-                        link='', )
+                        link=reverse('accounts:profile'), )
     query = request.GET.get('q', '')
     params = {}
     if query:

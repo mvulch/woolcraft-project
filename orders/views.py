@@ -170,10 +170,13 @@ def address_usage_view(request, address_id):
     address = get_object_or_404(Address, id=address_id, user=request.user)
     orders = Order.objects.filter(address=address).order_by('-created_at')
     custom_requests = CustomRequest.objects.filter(address=address).order_by('-created_at')
+
+    orders_page_obj = Paginator(orders, 2).get_page(request.GET.get('orders_page'))
+    requests_page_obj = Paginator(custom_requests, 2).get_page(request.GET.get('requests_page'))
     context = {
         'address': address,
-        'orders': orders,
-        'custom_requests': custom_requests,
+        'orders_page_obj': orders_page_obj,
+        'requests_page_obj': requests_page_obj,
     }
     return render(request, 'orders/address_usage.html', context)
 
@@ -266,7 +269,7 @@ def order_detail_view(request, order_id):
 @login_required
 def order_list_view(request):
     orders = Order.objects.filter(user=request.user).prefetch_related('items').order_by('-created_at')
-    paginator = Paginator(orders, 2)
+    paginator = Paginator(orders, settings.PAGE_ITEMS)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     context = {

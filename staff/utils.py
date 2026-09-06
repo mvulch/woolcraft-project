@@ -1,8 +1,18 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import user_passes_test
 from .models import Notification, NotificationRecipient
+from django.contrib.auth.decorators import login_required
+from django.http import Http404
 
 superuser_required = user_passes_test(lambda u: u.is_active and u.is_superuser, login_url='accounts:login')
+
+def staff_required(view_func):
+    @login_required(login_url='accounts:login')
+    def wrapper(request, *args, **kwargs):
+        if not (request.user.is_active and request.user.is_staff):
+            raise Http404
+        return view_func(request, *args, **kwargs)
+    return wrapper
 
 def notify_staff(type, message, link='', exclude_user=None):
     """creates notification for the staff users when users trigger it"""

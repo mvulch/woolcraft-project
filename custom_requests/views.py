@@ -42,7 +42,7 @@ def custom_request_create_view(request):
 @login_required
 def custom_requests_list_view(request):
     custom_requests = CustomRequest.objects.filter(user=request.user).order_by('-created_at')
-    paginator = Paginator(custom_requests, 2)
+    paginator = Paginator(custom_requests, settings.PAGE_ITEMS)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     context = {

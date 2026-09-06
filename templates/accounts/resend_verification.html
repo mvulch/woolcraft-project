@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Изпращане на линк за потвърждение | WoolCraft{% endblock %}
+{% block content %}
+<div class="row justify-content-center my-5">
+    <div class="col-12 col-lg-5 text-center">
+        <h3 class="h3-center fw-bold mb-4">Потвърждение на имейл</h3>
+        <p class="text-muted mb-4">Въведете имейла си и ще получите нов линк за потвърждение.</p>
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-floating mb-3">
+                        <input type="email" name="email" class="form-control"
+                               id="id_email" placeholder="Имейл" required>
+                        <label for="id_email">Имейл</label>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">
+                        Изпрати линк
+                    </button>
+                </form>
+            </div>
+        </div>
+        <p class="text-center mt-3 small">
+            <a href="{% url 'accounts:login' %}" class="text-success">Обратно към вход</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

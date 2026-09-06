@@ -11,6 +11,8 @@ from django.contrib import messages
 from staff.models import Notification
 from communication.models import Article
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
+
 
 # Create your views here.
 def home_view(request):
@@ -99,7 +101,7 @@ def category_products_view(request, category_slug=None):
     current_sort = request.GET.get('sort', 'newest')
     products = products.order_by(sort_options.get(current_sort, '-created_at'))
 
-    paginator = Paginator(products, 2)
+    paginator = Paginator(products, settings.PAGE_ITEMS)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     context = {
@@ -124,7 +126,7 @@ def search_engine_view(request):
             Q(name__icontains=query) | Q(description__icontains=query) | Q(category__name__icontains=query)
         ).select_related('category').prefetch_related('images').distinct()
 
-    paginator = Paginator(products, 2)
+    paginator = Paginator(products, settings.PAGE_ITEMS)
     page_obj = paginator.get_page(request.GET.get('page'))
     context = {
         'query': query,
@@ -160,7 +162,7 @@ def my_courses_view(request):
     ).values_list('product_id', flat=True)
     # course should be visible immediately after being paid
     courses = VideoCourse.objects.filter(product_id__in=purchased_product_ids).select_related('product')
-    paginator = Paginator(courses, 2)
+    paginator = Paginator(courses, settings.PAGE_ITEMS)
     page_obj = paginator.get_page(request.GET.get('page'))
     context = {
         'courses': courses,

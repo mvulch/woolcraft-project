@@ -11,13 +11,14 @@ from staff.utils import notify_staff
 from staff.models import Notification
 from accounts.models import UserNotification
 from accounts.utils import notify_user
+from django.conf import settings
 
 
 # Create your views here.
 @login_required
 def contact_messages_list_view(request):
     contact_messages = ContactMessage.objects.filter(user=request.user)
-    paginator = Paginator(contact_messages, 2)
+    paginator = Paginator(contact_messages, settings.PAGE_ITEMS)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     context = {
@@ -96,7 +97,7 @@ def contact_detail_view(request, contact_message_id):
 
 def article_list_view(request):
     articles = Article.objects.filter(is_published=True).prefetch_related('images')
-    paginator = Paginator(articles,2)
+    paginator = Paginator(articles, settings.PAGE_ITEMS)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     context = {

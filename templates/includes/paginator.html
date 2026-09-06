@@ -1,12 +1,13 @@
 {% if page_obj.has_other_pages %}
+{% with param=page_param|default:'page' %}
 <nav class="mt-4" aria-label="Paging">
     <ul class="pagination justify-content-center mb-1">
         {% if page_obj.has_previous %}
         <li class="page-item">
-            <a class="page-link" href="?page=1&{{ extra_params }}" title="Първа страница">&laquo;</a>
+            <a class="page-link" href="?{{ param }}=1&{{ extra_params }}" title="Първа страница">&laquo;</a>
         </li>
         <li class="page-item">
-            <a class="page-link" href="?page={{ page_obj.previous_page_number }}&{{ extra_params }}">{{ page_obj.previous_page_number }}</a>
+            <a class="page-link" href="?{{ param }}={{ page_obj.previous_page_number }}&{{ extra_params }}">{{ page_obj.previous_page_number }}</a>
         </li>
         {% else %}
         <li class="page-item disabled">
@@ -14,14 +15,14 @@
         </li>
         {% endif %}
         <li class="page-item-current active">
-            <a class="page-link" href="?page={{ page_obj.number }}&{{ extra_params }}">{{ page_obj.number }}</a>
+            <a class="page-link" href="?{{ param }}={{ page_obj.number }}&{{ extra_params }}">{{ page_obj.number }}</a>
         </li>
         {% if page_obj.has_next %}
         <li class="page-item">
-            <a class="page-link" href="?page={{ page_obj.next_page_number }}&{{ extra_params }}">{{ page_obj.next_page_number }}</a>
+            <a class="page-link" href="?{{ param }}={{ page_obj.next_page_number }}&{{ extra_params }}">{{ page_obj.next_page_number }}</a>
         </li>
         <li class="page-item">
-            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&{{ extra_params }}">&raquo;</a>
+            <a class="page-link" href="?{{ param }}={{ page_obj.paginator.num_pages }}&{{ extra_params }}">&raquo;</a>
         </li>
         {% else %}
         <li class="page-item disabled">
@@ -31,4 +32,5 @@
     </ul>
     <span class="page-link text-muted text-center">Страница {{ page_obj.number }} от {{ page_obj.paginator.num_pages }}.</span>
 </nav>
+{% endwith %}
 {% endif %}

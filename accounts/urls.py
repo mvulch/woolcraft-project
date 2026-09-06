@@ -1,5 +1,5 @@
 from django.urls import path, reverse_lazy
-from .views import register_view, login_view, profile_view, CustomPasswordChangeView, CustomLogoutView, user_notifications_view, user_notification_is_read_view
+from .views import register_view, login_view, profile_view, CustomPasswordChangeView, CustomLogoutView, user_notifications_view, user_notification_is_read_view, verify_email_view, resend_verification_view
 from django.contrib.auth import views as auth_views
 
 app_name = 'accounts'
@@ -28,5 +28,8 @@ urlpatterns = [
 
     path('notifications/', user_notifications_view, name='notifications'),
     path('notification/<int:notification_id>/read/', user_notification_is_read_view, name='notification_read'),
+
+    path('verify-email/<uidb64>/<token>/', verify_email_view, name='verify_email'),
+    path('resend-verification/', resend_verification_view, name='resend_verification'),
 
 ]
