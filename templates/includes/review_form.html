@@ -1,7 +1,7 @@
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-body p-4">
         <h5 class="fw-bold mb-3">{{ form_title|default:"Оставете коментар" }}</h5>
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {% if review_submit_hidden %}
                 <input type="hidden" name="review_submit" value="1">
@@ -30,6 +30,13 @@
                 {{ form.comment }}
                 {% if form.comment.errors %}
                     <div class="text-danger small">{{ form.comment.errors|striptags }}</div>
+                {% endif %}
+            </div>
+            <div class="mb-4">
+                <label class="form-label fw-medium">Снимка (по избор)</label>
+                {{ form.image }}
+                {% if form.image.errors %}
+                    <div class="text-danger small">{{ form.image.errors|striptags }}</div>
                 {% endif %}
             </div>
 

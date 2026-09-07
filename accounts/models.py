@@ -26,6 +26,7 @@ class UserNotification(models.Model):
         CUSTOM_REQUEST_PRICE = 'CUSTOM_REQUEST_PRICE', 'Предложена цена за заявка'
         CUSTOM_REQUEST_MESSAGE = 'CUSTOM_REQUEST_MESSAGE', 'Отговор на персонализирана заявка'
         STAFF_STATUS = 'STAFF_STATUS', 'Промяна на статус в екипа'
+        COURSE_QUESTION_REPLY = 'COURSE_QUESTION_REPLY', 'Отговор на въпрос към урок'
 
     recipient = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='user_notifications')
     type = models.CharField(max_length=30, choices=Type.choices)

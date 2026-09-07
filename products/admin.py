@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, Product, ProductAttribute, ProductImage, ProductReview, VideoCourse
+from .models import Category, Product, ProductAttribute, ProductImage, ProductReview, VideoCourse,Lesson, CourseQuestion, CourseQuestionReply
 # Register your models here.
 """admin.site.register(Category)
     admin.site.register(Product)
@@ -37,8 +37,24 @@ class ProductReviewAdmin(admin.ModelAdmin):
     readonly_fields = ("is_published", "is_rejected", "rejection_count")
 
 
+class LessonInline(admin.TabularInline):
+    model = Lesson
+    extra = 1
+    fields = ("title", "video", "order", "duration_minutes", "is_free_preview")
+
 @admin.register(VideoCourse)
 class VideoCourseAdmin(admin.ModelAdmin):
     list_display = ("product", "duration_minutes", "difficulty")
     list_filter = ("difficulty",)
+    inlines = [LessonInline]
+
+@admin.register(CourseQuestion)
+class CourseQuestionAdmin(admin.ModelAdmin):
+    list_display = ("lesson", "user", "created_at")
+    search_fields = ("lesson__title", "user__email")
+
+@admin.register(CourseQuestionReply)
+class CourseQuestionReplyAdmin(admin.ModelAdmin):
+    list_display = ("question", "user", "created_at")
+    search_fields = ("question__lesson__title", "user__email")
 

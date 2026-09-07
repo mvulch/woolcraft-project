@@ -51,6 +51,7 @@
                 {% elif notification.type == 'CUSTOM_REQUEST_PRICE' %}bi-tag text-warning
                 {% elif notification.type == 'CUSTOM_REQUEST_MESSAGE' %}bi-chat-dots text-info
                 {% elif notification.type == 'STAFF_STATUS' %}bi-person-badge text-primary
+                {% elif notification.type == 'COURSE_QUESTION_REPLY' %}bi-mortarboard-fill text-success
                 {% else %}bi-bell text-secondary
                 {% endif %} fs-5 mt-1 flex-shrink-0"></i>
             <div class="flex-grow-1">

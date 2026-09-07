@@ -35,6 +35,7 @@
                     <th>Рейтинг</th>
                     <th>Дата</th>
                     <th>Статус</th>
+                    <th>Изображение</th>
                     <th></th>
                 </tr>
             </thead>
@@ -60,6 +61,13 @@
                             <span class="badge bg-success">Одобрен</span>
                         {% else %}
                             <span class="badge bg-warning text-dark">Чака одобрение</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if review.image %}
+                            <i class="bi bi-check-circle-fill text-success ms-5"></i>
+                        {% else %}
+                            <i class="bi bi-x-circle text-danger ms-5"></i>
                         {% endif %}
                     </td>
                     <td>

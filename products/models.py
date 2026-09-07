@@ -83,6 +83,7 @@ class ProductReview(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='reviews')
     rating = models.PositiveSmallIntegerField()
     comment = models.TextField(blank=True)
+    image = CloudinaryField('Снимка към отзив', resource_type='image', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     is_published = models.BooleanField(default=False)
     is_rejected = models.BooleanField(default=False)
@@ -103,12 +104,84 @@ class VideoCourse(models.Model):
         ADVANCED = "ADVANCED", "Advanced"
 
     product = models.OneToOneField(Product, on_delete=models.CASCADE, related_name = "video_course")
-    video = CloudinaryField('Видео курс', resource_type='video', blank=True, null=True)
     duration_minutes = models.PositiveIntegerField(blank=False)
     difficulty = models.CharField(max_length=20, choices=Difficulty.choices,default=Difficulty.BEGINNER)
+
+    def get_progress_for_user(self, user):
+        total = self.lessons.count()
+        if not user or not user.is_authenticated or not total:
+            return 0, total
+        completed = LessonProgress.objects.filter(user=user, lesson__course=self, is_completed=True).count()
+        return completed, total
 
     def __str__(self):
         return self.product.name
     class Meta:
         verbose_name = 'Видео курс'
         verbose_name_plural = 'Видео курсове'
+
+class Lesson(models.Model):
+    course = models.ForeignKey(VideoCourse, on_delete=models.CASCADE, related_name='lessons')
+    title = models.CharField(max_length=120)
+    video = CloudinaryField('Видео на урок', resource_type='video', blank=True, null=True)
+    order = models.PositiveIntegerField(default=1, verbose_name='Ред')
+    duration_minutes = models.PositiveIntegerField(blank=True, null=True)
+    is_free_preview = models.BooleanField(default=False, verbose_name='Безплатен преглед')
+
+    class Meta:
+        ordering = ['order', 'id']
+        verbose_name = 'Урок'
+        verbose_name_plural = 'Уроци'
+
+    def get_url(self):
+        from django.urls import reverse
+        return reverse('products:course_watch_lesson', kwargs={'course_id': self.course_id, 'lesson_id': self.id})
+
+    def __str__(self):
+        return f'{self.course.product.name} - {self.title}'
+
+class LessonProgress(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='lesson_progress')
+    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, related_name='progress_entries')
+    is_completed = models.BooleanField(default=False)
+    completed_at = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        unique_together = ('user', 'lesson')
+        verbose_name = 'Прогрес на урок'
+        verbose_name_plural = 'Прогрес на уроци'
+
+    def __str__(self):
+        return f'{self.user.email} - {self.lesson}'
+
+
+class CourseQuestion(models.Model):
+    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, related_name='questions')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='course_questions')
+    text = models.TextField(max_length=1000, verbose_name='Въпрос')
+    image = CloudinaryField('Снимка', resource_type='image', blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['created_at']
+        verbose_name = 'Въпрос към урок'
+        verbose_name_plural = 'Въпроси към уроци'
+
+    def __str__(self):
+        return f'{self.user.email} - {self.lesson}'
+
+
+class CourseQuestionReply(models.Model):
+    question = models.ForeignKey(CourseQuestion, on_delete=models.CASCADE, related_name='replies')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='course_question_replies')
+    text = models.TextField(max_length=1000, verbose_name='Отговор')
+    image = CloudinaryField('Снимка', resource_type='image', blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['created_at']
+        verbose_name = 'Отговор на въпрос'
+        verbose_name_plural = 'Отговори на въпроси'
+
+    def __str__(self):
+        return f'Reply by {self.user.email} to #{self.question_id}'

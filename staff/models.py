@@ -8,6 +8,7 @@ class Notification(models.Model):
         NEW_REVIEW = 'NEW_REVIEW', 'Нов коментар'
         NEW_REQUEST = 'NEW_REQUEST', 'Нова заявка'
         NEW_CONTACT = 'NEW_CONTACT', 'Ново съобщение за контакт'
+        NEW_COURSE_QUESTION = 'NEW_COURSE_QUESTION', 'Нов въпрос към урок'
     recipient = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='notifications', through='NotificationRecipient')
     type = models.CharField(max_length=20, choices=Type.choices)
     message = models.CharField(max_length=200)

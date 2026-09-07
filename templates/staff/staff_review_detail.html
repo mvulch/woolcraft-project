@@ -26,6 +26,9 @@
                     </div>
                 </div>
                 <p class="mb-0">{{ review.comment }}</p>
+                {% if review.image %}
+                <img src="{{ review.image.url }}" alt="" class="rounded mt-3" style="max-height: 220px;">
+                {% endif %}
             </div>
         </div>
 

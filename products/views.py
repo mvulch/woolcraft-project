@@ -1,14 +1,16 @@
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
-
-from .models import Product, Category, ProductReview, VideoCourse
+from django.utils import timezone
+from .models import Product, Category, ProductReview, VideoCourse, Lesson, LessonProgress, CourseQuestion
 from django.core.paginator import Paginator
 from orders.models import Cart, Order, OrderItem
-from .forms import ProductReviewForm
+from .forms import ProductReviewForm, CourseQuestionForm, CourseQuestionReplyForm
 from staff.utils import notify_staff
 from django.contrib import messages
 from staff.models import Notification
+from accounts.utils import notify_user
+from accounts.models import UserNotification
 from communication.models import Article
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
@@ -37,7 +39,7 @@ def product_detail_view(request,category_slug,slug):
         existing_review = ProductReview.objects.filter(user=request.user,product=product_detail).first()
     if can_review and not existing_review:
         if request.method == 'POST' and 'review_submit' in request.POST:
-            review_form = ProductReviewForm(request.POST)
+            review_form = ProductReviewForm(request.POST, request.FILES)
             if review_form.is_valid():
                 review = review_form.save(commit=False)
                 review.user = request.user
@@ -63,12 +65,16 @@ def product_detail_view(request,category_slug,slug):
         if cart_item:
             quantity_in_cart = cart_item.quantity
     has_video_access = False
-    if request.user.is_authenticated and hasattr(product_detail, 'video_course'):
-        has_video_access = request.user.is_staff or OrderItem.objects.filter(
-            order__user=request.user,
-            product=product_detail,
-            order__status__in=(Order.OrderStatus.PAID, Order.OrderStatus.SHIPPED, Order.OrderStatus.DELIVERED,),
-        ).exists()
+    preview_lesson = None
+    if hasattr(product_detail, 'video_course'):
+        if request.user.is_authenticated:
+            has_video_access = request.user.is_staff or OrderItem.objects.filter(
+                order__user=request.user,
+                product=product_detail,
+                order__status__in=(Order.OrderStatus.PAID, Order.OrderStatus.SHIPPED, Order.OrderStatus.DELIVERED,),
+            ).exists()
+        if not has_video_access:
+            preview_lesson = product_detail.video_course.lessons.filter(is_free_preview=True).first()
     context = {
         'product': product_detail,
         'max_quantity': product_detail.stock_quantity - quantity_in_cart,
@@ -77,6 +83,7 @@ def product_detail_view(request,category_slug,slug):
         'can_review': can_review,
         'existing_review': existing_review,
         'has_video_access': has_video_access,
+        'preview_lesson': preview_lesson,
     }
     return render(request, 'products/product_detail.html', context)
 
@@ -138,7 +145,7 @@ def search_engine_view(request):
 def review_edit_view(request, review_id):
     review = get_object_or_404(ProductReview, id=review_id, user=request.user)
     if request.method == 'POST':
-        form = ProductReviewForm(request.POST, instance=review)
+        form = ProductReviewForm(request.POST, request.FILES, instance=review)
         if form.is_valid():
             review = form.save(commit=False)
             review.is_published = False
@@ -161,24 +168,135 @@ def my_courses_view(request):
         order__status__in=(Order.OrderStatus.PAID, Order.OrderStatus.SHIPPED, Order.OrderStatus.DELIVERED),
     ).values_list('product_id', flat=True)
     # course should be visible immediately after being paid
-    courses = VideoCourse.objects.filter(product_id__in=purchased_product_ids).select_related('product')
+    courses = VideoCourse.objects.filter(product_id__in=purchased_product_ids).select_related('product').prefetch_related('lessons')
     paginator = Paginator(courses, settings.PAGE_ITEMS)
     page_obj = paginator.get_page(request.GET.get('page'))
+    for course in page_obj:
+        course.completed_lessons, course.total_lessons = course.get_progress_for_user(request.user)
     context = {
         'courses': courses,
         'page_obj': page_obj,
     }
     return render(request, 'products/my_courses.html',context)
 
-@login_required
-def course_watch_view(request, course_id):
-    course = get_object_or_404(VideoCourse.objects.select_related('product'), id=course_id)
-    has_access = OrderItem.objects.filter(
-        order__user=request.user,
-        product=course.product,
-        order__status__in=(Order.OrderStatus.PAID, Order.OrderStatus.SHIPPED, Order.OrderStatus.DELIVERED),
-    ).exists()
-    if not has_access:
-        messages.error(request, 'Нямате достъп до този курс.')
+def _submit_course_question(request, current_lesson):
+    """handles the ask question action -> returns (form, was_created)"""
+    if not (request.method == 'POST' and 'question_submit' in request.POST):
+        return CourseQuestionForm(), False
+    form = CourseQuestionForm(request.POST, request.FILES)
+    if not form.is_valid():
+        return form, False
+    question = form.save(commit=False)
+    question.lesson = current_lesson
+    question.user = request.user
+    question.save()
+    notify_staff(
+        type=Notification.Type.NEW_COURSE_QUESTION,
+        message=f'Нов въпрос от {request.user.get_full_name()} към урок "{current_lesson.title}".',
+        link=current_lesson.get_url(),
+        exclude_user=request.user,
+    )
+    messages.success(request, 'Въпросът е изпратен.')
+    return form, True
+
+
+def _submit_course_question_reply(request, current_lesson):
+    """handles the reply question action -> returns (form, was_created)"""
+    if not (request.method == 'POST' and 'reply_submit' in request.POST):
+        return CourseQuestionReplyForm(), False
+    question = get_object_or_404(CourseQuestion, id=request.POST.get('question_id'), lesson=current_lesson)
+    form = CourseQuestionReplyForm(request.POST, request.FILES)
+    if not form.is_valid():
+        return form, False
+    reply = form.save(commit=False)
+    reply.question = question
+    reply.user = request.user
+    reply.save()
+    notify_user(
+        user=question.user,
+        type=UserNotification.Type.COURSE_QUESTION_REPLY,
+        message=f'Получихте отговор на въпроса си към урок "{current_lesson.title}".',
+        link=current_lesson.get_url(),
+    )
+    messages.success(request, 'Отговорът е публикуван.')
+    return form, True
+
+
+def _submit_lesson_complete(request, current_lesson):
+    """handles the complete lesson action -> returns if it was marked complete"""
+    if not (request.method == 'POST' and 'complete_submit' in request.POST):
+        return False
+    LessonProgress.objects.update_or_create(
+        user=request.user, lesson=current_lesson,
+        defaults={'is_completed': True, 'completed_at': timezone.now()},
+    )
+    messages.success(request, 'Урокът е отбелязан като завършен.')
+    return True
+
+
+def course_watch_view(request, course_id, lesson_id=None):
+    course = get_object_or_404(VideoCourse.objects.select_related('product').prefetch_related('lessons'), id=course_id)
+    lessons = list(course.lessons.all())
+    if lesson_id:
+        current_lesson = get_object_or_404(course.lessons, id=lesson_id)
+    else:
+        current_lesson = lessons[0] if lessons else None
+
+    has_access = request.user.is_authenticated and (
+        request.user.is_staff or OrderItem.objects.filter(
+            order__user=request.user,
+            product=course.product,
+            order__status__in=(Order.OrderStatus.PAID, Order.OrderStatus.SHIPPED, Order.OrderStatus.DELIVERED),
+        ).exists()
+    )
+
+    if not has_access and not (current_lesson and current_lesson.is_free_preview):
+        if not request.user.is_authenticated:
+            messages.info(request, 'Влезте в профила си, за да гледате този урок.')
+            return redirect('accounts:login')
+        messages.error(request, 'Нямате достъп до този урок.')
         return redirect('products:my_courses')
-    return render(request, 'products/course_watch.html', {'course': course})
+
+    if current_lesson is None:
+        messages.info(request, 'Курсът все още няма добавени уроци.')
+        return render(request, 'products/course_watch.html', {'course': course, 'lessons': lessons, 'current_lesson': None})
+
+    redirect_url = reverse('products:course_watch_lesson', args=[course.id, current_lesson.id])
+
+    question_form = None
+    if has_access:
+        question_form, created = _submit_course_question(request, current_lesson)
+        if created:
+            return redirect(redirect_url)
+
+    reply_form = None
+    if request.user.is_superuser:
+        reply_form, created = _submit_course_question_reply(request, current_lesson)
+        if created:
+            return redirect(redirect_url)
+
+    if has_access and _submit_lesson_complete(request, current_lesson):
+        return redirect(redirect_url)
+
+    completed_lesson_ids = set()
+    if has_access:
+        completed_lesson_ids = set(LessonProgress.objects.filter(
+            user=request.user, lesson__course=course, is_completed=True
+        ).values_list('lesson_id', flat=True))
+
+    questions = []
+    if has_access:
+        questions = current_lesson.questions.select_related('user').prefetch_related('replies__user')
+
+    context = {
+        'course': course,
+        'lessons': lessons,
+        'current_lesson': current_lesson,
+        'has_access': has_access,
+        'completed_lesson_ids': completed_lesson_ids,
+        'is_current_completed': current_lesson.id in completed_lesson_ids,
+        'questions': questions,
+        'question_form': question_form,
+        'reply_form': reply_form,
+    }
+    return render(request, 'products/course_watch.html', context)

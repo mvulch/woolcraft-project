@@ -34,8 +34,10 @@
                     </span>
                 </div>
                 <h5 class="fw-bold mb-2">{{ course.product.name }}</h5>
-                {% if not course.video %}
-                <p class="text-muted small mb-2">Видеото предстои да бъде добавено.</p>
+                {% if course.total_lessons %}
+                <p class="text-muted small mb-2">Прогрес: {{ course.completed_lessons }}/{{ course.total_lessons }} урока</p>
+                {% else %}
+                <p class="text-muted small mb-2">Уроците предстои да бъдат добавени.</p>
                 {% endif %}
                 <a href="{% url 'products:course_watch' course.id %}" class="btn btn-success btn-sm">
                     <i class="bi bi-play-circle me-1"></i>Гледай

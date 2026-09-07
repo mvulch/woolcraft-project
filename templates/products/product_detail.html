@@ -111,9 +111,14 @@
                 <i class="bi bi-play-circle me-1"></i>Гледай в Моите курсове
             </a>
             {% else %}
-            <button type="button" class="btn btn-outline-secondary w-100" disabled>
+            <button type="button" class="btn btn-outline-secondary w-100 mb-2" disabled>
                 <i class="bi bi-lock me-1"></i>Видео урокът е достъпен след покупка
             </button>
+            {% if preview_lesson %}
+            <a href="{% url 'products:course_watch_lesson' product.video_course.id preview_lesson.id %}" class="btn btn-success w-100">
+                <i class="bi bi-play-circle me-1"></i>Гледай безплатен урок
+            </a>
+            {% endif %}
             {% endif %}
         </div>
         {% endif %}
@@ -191,6 +196,9 @@
                     </div>
                 </div>
                 <p class="mb-0 small">{{ review.comment }}</p>
+                {% if review.image %}
+                <img src="{{ review.image.url }}" alt="" class="rounded mt-2" style="max-height: 160px;">
+                {% endif %}
             </div>
         </div>
         {% endfor %}
