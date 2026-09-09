@@ -5,25 +5,25 @@
 <nav aria-label="breadcrumb" class="mb-3">
     <ol class="breadcrumb">
         <li class="breadcrumb-item">
-            <a href="{% url 'products:all_products' %}" class="text-decoration-none">Магазин</a>
+            <a href="{% url 'products:all_products' %}" class="brown-main-title text-decoration-none">Магазин</a>
         </li>
         {% if product.category %}
             {% if product.category.parent %}
                 <li class="breadcrumb-item">
                     <a href="{% url 'products:category_products' product.category.parent.slug %}"
-                       class="text-decoration-none">
+                       class="brown-main-title text-decoration-none">
                         {{ product.category.parent.name }}
                     </a>
                 </li>
             {% endif %}
             <li class="breadcrumb-item">
                 <a href="{% url 'products:category_products' product.category.slug %}"
-                   class="text-decoration-none">
+                   class="brown-main-title text-decoration-none">
                     {{ product.category.name }}
                 </a>
             </li>
         {% endif %}
-        <li class="breadcrumb-item active">{{ product.name }}</li>
+        <li class="breadcrumb-item less-brown-title">{{ product.name }}</li>
     </ol>
 </nav>
 
@@ -88,7 +88,7 @@
         {% else %}
         <span class="badge bg-secondary mb-3">Изчерпан</span>
         {% endif %}
-        <p class="fs-4 text-primary fw-bold">{{ product.price }} €</p>
+        <p class="fs-4 text-dark fw-bold">{{ product.price }} €</p>
 
         {% if product.attributes.all %}
         <h4 class="h4 mt-4">Характеристики:</h4>
@@ -101,13 +101,13 @@
         <h4 class="h4 mt-4">Допълнителна информация за курса:</h4>
         <div class="card border-0 bg-light p-3 mt-2">
             <div class="d-flex gap-3 align-items-center mb-2">
-                <span class="badge bg-success">{{ product.video_course.get_difficulty_display }}</span>
+                <span class="badge badge-less-brown">{{ product.video_course.get_difficulty_display }}</span>
                 <span class="text-muted small">
                             <i class="bi bi-clock me-1"></i>{{ product.video_course.duration_minutes }} мин.
                         </span>
             </div>
             {% if has_video_access %}
-            <a href="{% url 'products:course_watch' product.video_course.id %}" class="btn btn-outline-success w-100">
+            <a href="{% url 'products:course_watch' product.video_course.id %}" class="btn btn-outline-brown mt-2 w-100">
                 <i class="bi bi-play-circle me-1"></i>Гледай в Моите курсове
             </a>
             {% else %}
@@ -133,7 +133,7 @@
                 {% if max_quantity > 0 %}
                 <input type="number" name="quantity" value="1" min="1" max="{{ max_quantity }}"
                        class="form-control w-auto" style="max-width: 80px;">
-                <button type="submit" class="btn btn-primary px-4">
+                <button type="submit" class="btn btn-brown px-4">
                     <i class="bi bi-cart-plus me-1"></i>Добави в количката
                 </button>
                 {% else %}
@@ -196,8 +196,15 @@
                     </div>
                 </div>
                 <p class="mb-0 small">{{ review.comment }}</p>
-                {% if review.image %}
-                <img src="{{ review.image.url }}" alt="" class="rounded mt-2" style="max-height: 160px;">
+                {% if review.image or review.extra_images.all %}
+                <div class="d-flex flex-wrap gap-2 mt-2">
+                    {% if review.image %}
+                    <img src="{{ review.image.url }}" alt="" class="rounded" style="max-height: 160px;">
+                    {% endif %}
+                    {% for img in review.extra_images.all %}
+                    <img src="{{ img.image.url }}" alt="" class="rounded" style="max-height: 160px;">
+                    {% endfor %}
+                </div>
                 {% endif %}
             </div>
         </div>

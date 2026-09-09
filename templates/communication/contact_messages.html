@@ -10,11 +10,11 @@
         {% if is_staff_view %}Съобщения за контакт{% else %}Моите запитвания{% endif %}
     </h3>
     {% if is_staff_view %}
-    <a href="{% url 'staff:staff_dashboard' %}" class="btn btn-outline-secondary btn-sm">
+    <a href="{% url 'staff:staff_dashboard' %}" class="btn btn-outline-less-brown btn-sm">
         <i class="bi bi-arrow-left me-1"></i>Табло
     </a>
     {% else %}
-    <a href="{% url 'communication:create_contact' %}" class="btn btn-success btn-sm">
+    <a href="{% url 'communication:create_contact' %}" class="btn btn-brown btn-sm">
         <i class="bi bi-plus-lg me-1"></i>Ново запитване
     </a>
     {% endif %}
@@ -23,15 +23,15 @@
 {% if is_staff_view %}
 <div class="d-flex gap-2 mb-4">
     <a href="{% url 'staff:staff_contact_messages' %}"
-       class="btn btn-sm {% if not current_filter %}btn-success{% else %}btn-outline-secondary{% endif %}">
+       class="btn btn-sm {% if not current_filter %}btn-brown{% else %}btn-outline-brown{% endif %}">
         Всички
     </a>
     <a href="?filter=unresolved"
-       class="btn btn-sm {% if current_filter == 'unresolved' %}btn-success{% else %}btn-outline-secondary{% endif %}">
+       class="btn btn-sm {% if current_filter == 'unresolved' %}btn-less-brown{% else %}btn-outline-less-brown{% endif %}">
         Неприключени
     </a>
     <a href="?filter=resolved"
-       class="btn btn-sm {% if current_filter == 'resolved' %}btn-success{% else %}btn-outline-secondary{% endif %}">
+       class="btn btn-sm {% if current_filter == 'resolved' %}btn-less-brown{% else %}btn-outline-less-brown{% endif %}">
         Приключени
     </a>
 </div>
@@ -73,7 +73,7 @@
                 </td>
                 <td>
                     <a href="{% url 'communication:contact_detail' msg.id %}"
-                       class="btn btn-outline-success btn-sm">
+                       class="btn btn-outline-brown btn-sm">
                         Преглед
                     </a>
                 </td>
@@ -87,7 +87,7 @@
                     <div class="py-3">
                         <i class="bi bi-envelope text-muted" style="font-size: 3rem;"></i>
                         <p class="text-muted mt-3">Нямате изпратени съобщения.</p>
-                        <a href="{% url 'communication:create_contact' %}" class="btn btn-success btn-sm">
+                        <a href="{% url 'communication:create_contact' %}" class="btn btn-brown btn-sm">
                             Изпрати съобщение
                         </a>
                     </div>

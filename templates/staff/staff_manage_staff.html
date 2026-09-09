@@ -4,7 +4,7 @@
 {% block content %}
 <div class="d-flex justify-content-between align-items-center my-5">
     <h3 class="fw-bold mb-0">Управление на персонал</h3>
-    <a href="{% url 'staff:staff_dashboard' %}" class="btn btn-outline-secondary btn-sm">
+    <a href="{% url 'staff:staff_dashboard' %}" class="btn btn-outline-less-brown btn-sm">
         <i class="bi bi-arrow-left me-1"></i>Табло
     </a>
 </div>
@@ -15,14 +15,14 @@
     {% if show_all %}
     <input type="hidden" name="all" value="1">
     {% endif %}
-    <button type="submit" class="btn btn-success">Търси</button>
+    <button type="submit" class="btn btn-less-brown">Търси</button>
     {% if query %}
     <a href="?{% if show_all %}all=1{% endif %}" class="btn btn-outline-secondary d-inline-flex align-items-center">Изчисти</a>
     {% endif %}
     {% if show_all %}
-    <a href="?{% if query %}q={{ query|urlencode }}{% endif %}" class="btn btn-outline-dark">Покажи персонал</a>
+    <a href="?{% if query %}q={{ query|urlencode }}{% endif %}" class="btn btn-outline-less-brown">Покажи персонал</a>
     {% else %}
-    <a href="?all=1{% if query %}&q={{ query|urlencode }}{% endif %}" class="btn btn-outline-dark">Покажи всички</a>
+    <a href="?all=1{% if query %}&q={{ query|urlencode }}{% endif %}" class="btn btn-outline-less-brown">Покажи всички</a>
     {% endif %}
 </form>
 

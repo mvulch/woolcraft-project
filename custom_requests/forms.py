@@ -2,21 +2,28 @@ from django import forms
 
 from .models import CustomRequest, CustomRequestMessage
 from decimal import Decimal
-from woolCraftProject.validators import validate_client_images
+from woolCraftProject.validators import validate_client_images, MultipleFileField
+
+MAX_REQUEST_IMAGES = 3
 
 class CustomRequestForm(forms.ModelForm):
+    images = MultipleFileField(required=False, label='Примерни снимки (по избор)')
+
     class Meta:
         model = CustomRequest
-        fields = ['title', 'description', 'specific_colors', 'size','reference_image']
+        fields = ['title', 'description', 'specific_colors', 'size']
         labels = {
             'title': 'Заглавие',
             'description': 'Описание',
             'specific_colors': 'Конкретни желани цветове',
             'size': 'Ориентировъчен размер',
-            'reference_image': 'Примерна снимка',
         }
-    def clean_reference_image(self):
-        return validate_client_images(self.cleaned_data.get('reference_image'))
+
+    def clean_images(self):
+        images = self.cleaned_data.get('images') or []
+        if len(images) > MAX_REQUEST_IMAGES:
+            raise forms.ValidationError(f'Можете да добавите най-много {MAX_REQUEST_IMAGES} снимки.')
+        return [validate_client_images(image) for image in images]
 
 class CustomRequestMessageForm(forms.ModelForm):
     class Meta:

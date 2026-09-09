@@ -4,36 +4,35 @@
 {% block content %}
 <div class="d-flex justify-content-between align-items-center my-5">
     <h3 class="fw-bold mb-0">Известия</h3>
-    <a href="{% url 'staff:staff_dashboard' %}" class="btn btn-outline-secondary btn-sm">
+    <a href="{% url 'staff:staff_dashboard' %}" class="btn btn-outline-less-brown btn-sm">
         <i class="bi bi-arrow-left me-1"></i>Табло
     </a>
 </div>
 
 <div class="d-flex gap-2 mb-2 flex-wrap">
     <a href="?read={{ current_read }}"
-       class="btn btn-sm {% if not current_type %}btn-success{% else %}btn-outline-secondary{% endif %}">
+       class="btn btn-sm {% if not current_type %}btn-brown{% else %}btn-outline-brown{% endif %}">
         Всички типове
     </a>
     {% for value, label in type_choices %}
     <a href="?type={{ value }}&read={{ current_read }}"
-       class="btn btn-sm {% if current_type == value %}btn-success{% else %}btn-outline-secondary{% endif %}">
+       class="btn btn-sm {% if current_type == value %}btn-less-brown{% else %}btn-outline-less-brown{% endif %}">
         {{ label }}
     </a>
     {% endfor %}
 </div>
 
-
 <div class="d-flex gap-2 mb-4 flex-wrap">
     <a href="?type={{ current_type }}"
-       class="btn btn-sm {% if not current_read %}btn-success{% else %}btn-outline-secondary{% endif %}">
+       class="btn btn-sm {% if not current_read %}btn-brown{% else %}btn-outline-brown{% endif %}">
         Всички
     </a>
     <a href="?type={{ current_type }}&read=unread"
-       class="btn btn-sm {% if current_read == 'unread' %}btn-success{% else %}btn-outline-secondary{% endif %}">
+       class="btn btn-sm {% if current_read == 'unread' %}btn-less-brown{% else %}btn-outline-less-brown{% endif %}">
         Непрочетени
     </a>
     <a href="?type={{ current_type }}&read=read"
-       class="btn btn-sm {% if current_read == 'read' %}btn-success{% else %}btn-outline-secondary{% endif %}">
+       class="btn btn-sm {% if current_read == 'read' %}btn-less-brown{% else %}btn-outline-less-brown{% endif %}">
         Прочетени
     </a>
 </div>
@@ -65,7 +64,7 @@
                     </td>
                     <td>
                         <a href="{% url 'staff:staff_notification_read' notif_recipient.notification.id %}"
-                           class="btn btn-outline-success btn-sm">
+                           class="btn btn-outline-brown btn-sm">
                             Преглед
                         </a>
                     </td>

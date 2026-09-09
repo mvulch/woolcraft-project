@@ -5,17 +5,17 @@
 {% block content %}
 <div class="d-flex justify-content-between align-items-center my-5">
     <h3 class="fw-bold mb-0">Известия</h3>
-    <span class="text-muted small">{{ notifications|length }} общо</span>
+    <span class="text-muted small">{{ page_obj|length }} общо</span>
 </div>
 <!-- filter type-->
 <div class="d-flex gap-2 mb-2 flex-wrap">
     <a href="?read={{ current_read }}"
-       class="btn btn-sm {% if not current_type %}btn-success{% else %}btn-outline-secondary{% endif %}">
+       class="btn btn-sm {% if not current_type %}btn-brown{% else %}btn-outline-brown{% endif %}">
         Всички типове
     </a>
     {% for value, label in type_choices %}
     <a href="?type={{ value }}&read={{ current_read }}"
-       class="btn btn-sm {% if current_type == value %}btn-success{% else %}btn-outline-secondary{% endif %}">
+       class="btn btn-sm {% if current_type == value %}btn-less-brown{% else %}btn-outline-less-brown{% endif %}">
         {{ label }}
     </a>
     {% endfor %}
@@ -23,15 +23,15 @@
 <!-- filter read -->
 <div class="d-flex gap-2 mb-4 flex-wrap">
     <a href="?type={{ current_type }}"
-       class="btn btn-sm {% if not current_read %}btn-success{% else %}btn-outline-secondary{% endif %}">
+       class="btn btn-sm {% if not current_read %}btn-brown{% else %}btn-outline-brown{% endif %}">
         Всички
     </a>
     <a href="?type={{ current_type }}&read=unread"
-       class="btn btn-sm {% if current_read == 'unread' %}btn-success{% else %}btn-outline-secondary{% endif %}">
+       class="btn btn-sm {% if current_read == 'unread' %}btn-less-brown{% else %}btn-outline-less-brown{% endif %}">
         Непрочетени
     </a>
     <a href="?type={{ current_type }}&read=read"
-       class="btn btn-sm {% if current_read == 'read' %}btn-success{% else %}btn-outline-secondary{% endif %}">
+       class="btn btn-sm {% if current_read == 'read' %}btn-less-brown{% else %}btn-outline-less-brown{% endif %}">
         Прочетени
     </a>
 </div>
@@ -62,15 +62,15 @@
             </div>
             {% if notification.link %}
             <a href="{% url 'accounts:notification_read' notification.id %}"
-               class="btn btn-outline-success btn-sm align-self-center flex-shrink-0">
+               class="btn btn-outline-brown btn-sm align-self-center flex-shrink-0">
                 Преглед
             </a>
             {% endif %}
         </div>
         {% empty %}
         <div class="text-center py-5">
-            <i class="bi bi-bell text-muted" style="font-size: 3rem;"></i>
-            <p class="text-muted mt-3">Няма известия.</p>
+            <i class="bi bi-bell brown-main-title" style="font-size: 3rem;"></i>
+            <p class="brown-main-title mt-3">Няма известия.</p>
         </div>
         {% endfor %}
     </div>

@@ -1,51 +1,90 @@
-<div class="card border-0 shadow-sm mb-4">
-    <div class="card-body p-4">
+{% if show_product_header %}
+<div class="text-center mb-4">
+    <h2 class="fw-bold mb-4">{{ form_title|default:"Напишете отзив за продукта" }}</h2>
+    {% if product %}
+        {% with main_image=product.get_main_image %}
+        {% if main_image %}
+        <img src="{{ main_image.image.url }}" alt="{{ product.name }}" class="rounded mb-2"
+             style="max-height: 180px; object-fit: cover;">
+        {% endif %}
+        {% endwith %}
+        <h5 class="fw-medium mb-0">{{ product.name }}</h5>
+    {% endif %}
+</div>
+{% endif %}
+
+<div class="{% if not show_product_header %}card border-0 shadow-sm mb-4{% endif %}">
+    <div class="{% if show_product_header %}mx-auto{% else %}card-body p-4{% endif %}" style="{% if show_product_header %}max-width: 480px;{% endif %}">
+        {% if not show_product_header %}
         <h5 class="fw-bold mb-3">{{ form_title|default:"Оставете коментар" }}</h5>
-        <form method="post" enctype="multipart/form-data">
+        {% endif %}
+        <form method="post" enctype="multipart/form-data" class="{% if show_product_header %}text-center{% endif %}">
             {% csrf_token %}
             {% if review_submit_hidden %}
                 <input type="hidden" name="review_submit" value="1">
             {% endif %}
             <div class="mb-3">
-                <label class="form-label fw-medium">Оценка</label>
-                <div class="d-flex gap-3">
-                    {% for value, label in form.rating.field.choices %}
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio"
-                               name="rating" id="rating_{{ value }}"
-                               value="{{ value }}"
-                               {% if form.rating.value|stringformat:"s" == value|stringformat:"s" %}checked{% endif %}>
-                        <label class="form-check-label" for="rating_{{ value }}">
-                            {{ value }} <i class="bi bi-star-fill text-warning"></i>
-                        </label>
-                    </div>
+                <div class="star-rating d-inline-flex">
+                    {% for value in "54321" %}
+                    <input class="star-rating-input" type="radio"
+                           name="rating" id="rating_{{ value }}"
+                           value="{{ value }}"
+                           {% if form.rating.value|stringformat:"s" == value %}checked{% endif %}>
+                    <label class="star-rating-label" for="rating_{{ value }}">
+                        <i class="bi bi-star-fill"></i>
+                    </label>
                     {% endfor %}
                 </div>
                 {% if form.rating.errors %}
                     <div class="text-danger small">{{ form.rating.errors|striptags }}</div>
                 {% endif %}
             </div>
-            <div class="mb-4">
-                <label class="form-label fw-medium">Коментар</label>
+            <div class="mb-3 text-start">
                 {{ form.comment }}
                 {% if form.comment.errors %}
                     <div class="text-danger small">{{ form.comment.errors|striptags }}</div>
                 {% endif %}
             </div>
             <div class="mb-4">
-                <label class="form-label fw-medium">Снимка (по избор)</label>
-                {{ form.image }}
-                {% if form.image.errors %}
-                    <div class="text-danger small">{{ form.image.errors|striptags }}</div>
+                {{ form.images }}
+                <label for="{{ form.images.id_for_label }}" class="btn btn-link text-decoration-none text-secondary p-0">
+                    <i class="bi bi-camera me-1"></i>Добави снимки (до 3)
+                </label>
+                <div class="small text-muted mt-1" id="{{ form.images.id_for_label }}_filenames"></div>
+                <div class="small text-danger mt-1 d-none" id="{{ form.images.id_for_label }}_toomany">
+                    Можете да добавите най-много 3 снимки.
+                </div>
+                {% if form.images.errors %}
+                    <div class="text-danger small">{{ form.images.errors|striptags }}</div>
                 {% endif %}
             </div>
 
-            <div class="d-flex gap-2">
-                <button type="submit" class="btn btn-success">
+            <div class="d-flex gap-2 {% if show_product_header %}justify-content-center{% endif %}">
+                <button type="submit" class="btn btn-success" id="{{ form.images.id_for_label }}_submit">
                     <i class="bi {{ submit_icon|default:'bi-send' }} me-1"></i>{{ submit_label|default:"Изпрати" }}
                 </button>
+                {% if cancel_url %}
                 <a href="{{ cancel_url }}" class="btn btn-outline-secondary">Отказ</a>
+                {% endif %}
             </div>
         </form>
     </div>
 </div>
+<script>
+(function() {
+    var MAX_IMAGES = 3;
+    var input = document.getElementById('{{ form.images.id_for_label }}');
+    var out = document.getElementById('{{ form.images.id_for_label }}_filenames');
+    var tooMany = document.getElementById('{{ form.images.id_for_label }}_toomany');
+    var submitBtn = document.getElementById('{{ form.images.id_for_label }}_submit');
+    if (input && out) {
+        input.addEventListener('change', function() {
+            var names = Array.prototype.map.call(input.files, function(f) { return f.name; });
+            out.textContent = names.join(', ');
+            var overLimit = input.files.length > MAX_IMAGES;
+            tooMany.classList.toggle('d-none', !overLimit);
+            submitBtn.disabled = overLimit;
+        });
+    }
+})();
+</script>

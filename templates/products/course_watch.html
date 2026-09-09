@@ -5,7 +5,7 @@
 <div class="row my-5">
     <div class="col-12 d-flex justify-content-between align-items-center mb-3">
         <h3 class="fw-bold m-0">{{ course.product.name }}</h3>
-        <a href="{% url 'products:my_courses' %}" class="btn btn-outline-secondary btn-sm">
+        <a href="{% url 'products:my_courses' %}" class="btn btn-outline-less-brown btn-sm">
             <i class="bi bi-arrow-left me-1"></i>Моите курсове
         </a>
     </div>
@@ -25,7 +25,7 @@
                                 <i class="bi bi-play-circle me-1"></i>
                             {% endif %}
                             {{ forloop.counter }}. {{ lesson.title }}
-                            {% if lesson.is_free_preview %}<span class="badge bg-success ms-1">Безплатно</span>{% endif %}
+                            {% if lesson.is_free_preview %}<span class="badge badge-less-brown ms-1">Безплатно</span>{% endif %}
                         </span>
                         {% if lesson.duration_minutes %}<span class="small {% if current_lesson and lesson.id == current_lesson.id %}text-white-50{% else %}text-muted{% endif %}">{{ lesson.duration_minutes }} мин.</span>{% endif %}
                     </a>
@@ -45,7 +45,7 @@
     <div class="col-12 col-lg-8 order-lg-1">
         {% if current_lesson %}
         <div class="d-flex gap-2 align-items-center mb-3 flex-wrap">
-            <span class="badge bg-success">{{ course.get_difficulty_display }}</span>
+            <span class="badge badge-less-brown">{{ course.get_difficulty_display }}</span>
             {% if has_access %}
             <span class="text-muted small">Прогрес: {{ completed_lesson_ids|length }}/{{ lessons|length }} урока</span>
             {% else %}
@@ -70,11 +70,11 @@
             {% csrf_token %}
             <input type="hidden" name="complete_submit" value="1">
             {% if is_current_completed %}
-            <button type="submit" class="btn btn-outline-secondary btn-sm" disabled>
+            <button type="submit" class="btn btn-outline-brown btn-sm" disabled>
                 <i class="bi bi-check-circle-fill me-1"></i>Завършен урок
             </button>
             {% else %}
-            <button type="submit" class="btn btn-success btn-sm">
+            <button type="submit" class="btn btn-brown btn-sm">
                 <i class="bi bi-check-lg me-1"></i>Отбележи като завършен
             </button>
             {% endif %}
@@ -83,7 +83,7 @@
         <div class="alert alert-light border">
             <i class="bi bi-info-circle me-1"></i>
             Това е безплатен преглед. Закупете курса за пълен достъп до всички уроци и въпроси към ментор.
-            <a href="{{ course.product.get_url }}" class="btn btn-success btn-sm ms-2">Към продукта</a>
+            <a href="{{ course.product.get_url }}" class="btn btn-brown btn-sm ms-2">Към продукта</a>
         </div>
         {% endif %}
 
@@ -106,36 +106,38 @@
                         {{ question_form.image }}
                         {% if question_form.image.errors %}<div class="text-danger small">{{ question_form.image.errors|striptags }}</div>{% endif %}
                     </div>
-                    <button type="submit" class="btn btn-success btn-sm"><i class="bi bi-send me-1"></i>Публикувай въпрос</button>
+                    <button type="submit" class="btn btn-less-brown btn-sm"><i class="bi bi-send me-1"></i>Публикувай въпрос</button>
                 </form>
             </div>
         </div>
 
         {% for question in questions %}
-        <div class="card border-0 shadow-sm mb-3">
-            <div class="card-body p-3">
-                <p class="fw-medium mb-1">{{ question.user.get_full_name }} <span class="text-muted small fw-normal">{{ question.created_at|date:"d.m.Y H:i" }}</span></p>
+        <div class="chat-row {% if question.user == user %}chat-row-mine{% else %}chat-row-other{% endif %}">
+            <div class="chat-box {% if question.user == user %}chat-box-mine{% else %}chat-box-other{% endif %}" style="max-width: 90%;">
+                <p class="fw-medium mb-1">{{ question.user.get_full_name }} <span class="small fw-normal">{{ question.created_at|date:"d.m.Y H:i" }}</span></p>
                 <p class="mb-2 small">{{ question.text }}</p>
                 {% if question.image %}
                 <img src="{{ question.image.url }}" alt="" class="rounded mb-2" style="max-height: 160px;">
                 {% endif %}
 
                 {% for reply in question.replies.all %}
-                <div class="border-start border-success border-3 ps-3 ms-2 mt-2">
-                    <p class="fw-medium mb-1 small"><i class="bi bi-mortarboard-fill text-success me-1"></i>{{ reply.user.get_full_name }} <span class="text-muted fw-normal">{{ reply.created_at|date:"d.m.Y H:i" }}</span></p>
-                    <p class="mb-1 small">{{ reply.text }}</p>
-                    {% if reply.image %}<img src="{{ reply.image.url }}" alt="" class="rounded" style="max-height: 140px;">{% endif %}
+                <div class="chat-row {% if reply.user == user %}chat-row-mine{% else %}chat-row-other{% endif %} mt-2">
+                    <div class="chat-box {% if reply.user == user %}chat-box-mine{% else %}chat-box-other{% endif %}">
+                        <p class="fw-medium mb-1 small"><i class="bi bi-mortarboard-fill me-1"></i>{{ reply.user.get_full_name }} <span class="fw-normal">{{ reply.created_at|date:"d.m.Y H:i" }}</span></p>
+                        <p class="mb-1 small">{{ reply.text }}</p>
+                        {% if reply.image %}<img src="{{ reply.image.url }}" alt="" class="rounded" style="max-height: 140px;">{% endif %}
+                    </div>
                 </div>
                 {% endfor %}
 
                 {% if user.is_superuser %}
-                <form method="post" enctype="multipart/form-data" class="mt-3 ps-3 ms-2">
+                <form method="post" enctype="multipart/form-data" class="mt-3">
                     {% csrf_token %}
                     <input type="hidden" name="reply_submit" value="1">
                     <input type="hidden" name="question_id" value="{{ question.id }}">
                     <div class="mb-2">{{ reply_form.text }}</div>
                     <div class="mb-2">{{ reply_form.image }}</div>
-                    <button type="submit" class="btn btn-outline-success btn-sm">Отговори</button>
+                    <button type="submit" class="btn btn-outline-brown btn-sm">Отговори</button>
                 </form>
                 {% endif %}
             </div>

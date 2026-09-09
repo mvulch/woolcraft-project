@@ -2,7 +2,7 @@ from django.db.models import Q
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.utils import timezone
-from .models import Product, Category, ProductReview, VideoCourse, Lesson, LessonProgress, CourseQuestion
+from .models import Product, Category, ProductReview, ProductReviewImage, VideoCourse, Lesson, LessonProgress, CourseQuestion
 from django.core.paginator import Paginator
 from orders.models import Cart, Order, OrderItem
 from .forms import ProductReviewForm, CourseQuestionForm, CourseQuestionReplyForm
@@ -45,6 +45,8 @@ def product_detail_view(request,category_slug,slug):
                 review.user = request.user
                 review.product = product_detail
                 review.save()
+                for image in review_form.cleaned_data.get('images', []):
+                    ProductReviewImage.objects.create(review=review, image=image)
                 notify_staff(type=Notification.Type.NEW_REVIEW,
                              message=f'Нов коментар от {request.user.get_full_name()} за продукт {product_detail}.',
                              link=reverse('staff:staff_approve_review', args=[review.id]),
@@ -68,7 +70,7 @@ def product_detail_view(request,category_slug,slug):
     preview_lesson = None
     if hasattr(product_detail, 'video_course'):
         if request.user.is_authenticated:
-            has_video_access = request.user.is_staff or OrderItem.objects.filter(
+            has_video_access = OrderItem.objects.filter(
                 order__user=request.user,
                 product=product_detail,
                 order__status__in=(Order.OrderStatus.PAID, Order.OrderStatus.SHIPPED, Order.OrderStatus.DELIVERED,),
@@ -151,6 +153,8 @@ def review_edit_view(request, review_id):
             review.is_published = False
             review.is_rejected = False
             review.save()
+            for image in form.cleaned_data.get('images', []):
+                ProductReviewImage.objects.create(review=review, image=image)
             notify_staff(type=Notification.Type.NEW_REVIEW,
                          message=f'Редактиран коментар от {request.user.get_full_name()} за продукт {review.product}.',
                          link=reverse('staff:staff_approve_review', args=[review.id]),

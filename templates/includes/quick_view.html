@@ -25,7 +25,7 @@
                 <span class="text-muted ms-1">{{ count }} отзива</span>
             {% endif %}
         {% endwith %}
-        <p class="fs-4 fw-bold text-success mb-2">{{ product.price }} €</p>
+        <p class="fs-4 fw-bold text-dark my-2">{{ product.price }} €</p>
         {% if product.stock_quantity > 0 %}
             <span class="badge bg-success mb-3">В наличност</span>
         {% else %}
@@ -33,7 +33,7 @@
         {% endif %}
         <p class="text-muted small mb-3">{{ product.description|truncatewords:30 }}</p>
         <a href="{% url 'products:product_detail' product.category.slug product.slug %}"
-           class="btn btn-outline-success">
+           class="btn btn-outline-brown">
             <i class="bi bi-box-arrow-up-right me-1"></i>Към продукта
         </a>
     </div>

@@ -7,18 +7,18 @@
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item">
-            <a href="{% url 'products:all_products' %}" class="text-decoration-none">Магазин</a>
+            <a href="{% url 'products:all_products' %}" class="brown-main-title text-decoration-none">Магазин</a>
         </li>
         {% if category %}
             {% if category.parent %}
             <li class="breadcrumb-item">
                 <a href="{% url 'products:category_products' category.parent.slug %}"
-                   class="text-decoration-none">
+                   class="brown-main-title text-decoration-none">
                     {{ category.parent.name }}
                 </a>
             </li>
             {% endif %}
-                <li class="breadcrumb-item active">{{ category.name }}</li>
+                <li class="breadcrumb-item less-brown-title ">{{ category.name }}</li>
         {% endif %}
     </ol>
 </nav>

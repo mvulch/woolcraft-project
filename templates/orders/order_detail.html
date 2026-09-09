@@ -6,7 +6,7 @@
     {% if is_staff_view %}
     <div class="d-flex justify-content-between align-items-center mt-5">
         <h3 class="fw-bold mb-0">Поръчка #{{ order.id }}</h3>
-        <a href="{% url 'staff:staff_orders_list' %}" class="btn btn-outline-secondary btn-sm">
+        <a href="{% url 'staff:staff_orders_list' %}" class="btn btn-outline-less-brown btn-sm">
             <i class="bi bi-arrow-left me-1"></i>Обратно към поръчки
         </a>
     </div>
@@ -78,7 +78,7 @@
                     <div class="col-6 text-muted small">Дата на последна промяна:</div>
                     <div class="col-6 small">{{ order.updated_at|date:"d.m.Y H:i" }}</div>
                     <div class="col-6 text-muted small">Общо:</div>
-                    <div class="col-6 small fw-bold text-success">{{ order.total_price }} €</div>
+                    <div class="col-6 small fw-bold text-dark">{{ order.total_price }} €</div>
                 </div>
             </div>
         </div>
@@ -118,7 +118,7 @@
                 <hr>
                 <div class="d-flex justify-content-between fw-bold">
                     <span>Общо</span>
-                    <span class="text-success">{{ order.total_price }} €</span>
+                    <span class="text-dark">{{ order.total_price }} €</span>
                 </div>
             </div>
         </div>
@@ -168,11 +168,10 @@
 </div>
 <div class="d-flex gap-2 pt-4 flex-wrap {% if not is_staff_view %}justify-content-center{% endif %}">
     {% if not is_staff_view %}
-    <a href="{% url 'products:all_products' %}" class="btn btn-success">
+    <a href="{% url 'products:all_products' %}" class="btn btn-brown">
         <i class="bi bi-arrow-left me-1"></i>Продължи пазаруването
     </a>
-    <a href="{% url 'orders:order_list' %}" class="btn btn-outline-success">Моите поръчки</a>
-    <a href="{% url 'accounts:profile' %}" class="btn btn-outline-secondary">Моят профил</a>
+    <a href="{% url 'orders:order_list' %}" class="btn btn-outline-brown">Моите поръчки</a>
     {% endif %}
 </div>
 {% endblock %}

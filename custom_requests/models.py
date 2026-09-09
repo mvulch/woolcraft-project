@@ -34,6 +34,15 @@ class CustomRequest(models.Model):
     def __str__(self):
         return f'Заявка #{self.id} от {self.user.get_full_name()}'
 
+class CustomRequestImage(models.Model):
+    request = models.ForeignKey(CustomRequest, on_delete=models.CASCADE, related_name='extra_images')
+    image = CloudinaryField('Снимка от заявка', resource_type='image')
+    class Meta:
+        verbose_name = 'Снимка към заявка'
+        verbose_name_plural = 'Снимки към заявки'
+    def __str__(self):
+        return f'Снимка за заявка #{self.request_id}'
+
 class CustomRequestMessage(models.Model):
     request = models.ForeignKey(CustomRequest, on_delete=models.CASCADE, related_name='messages')
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name='custom_request_messages')

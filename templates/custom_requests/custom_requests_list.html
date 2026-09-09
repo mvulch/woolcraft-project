@@ -3,8 +3,8 @@
 {% block title %}Моите заявки | WoolCraft{% endblock %}
 {% block content %}
 <div class="d-flex justify-content-between align-items-center my-5">
-    <h3 class="fw-bold mb-0">Моите заявки</h3>
-    <a href="{% url 'custom_requests:custom_request_create' %}" class="btn btn-success btn-sm">
+    <h3 class="fw-bold  mb-0">Моите заявки</h3>
+    <a href="{% url 'custom_requests:custom_request_create' %}" class="btn btn-brown btn-sm">
         <i class="bi bi-plus-lg me-1"></i>Нова заявка
     </a>
 </div>
@@ -32,7 +32,7 @@
                     </td>
                     <td>
                         <a href="{% url 'custom_requests:custom_request_detail' custom_request.id %}"
-                           class="btn btn-outline-success btn-sm">Преглед </a>
+                           class="btn btn-outline-brown btn-sm">Преглед </a>
                     </td>
                 </tr>
                 {% empty %}

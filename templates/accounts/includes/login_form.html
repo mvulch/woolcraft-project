@@ -1,25 +1,25 @@
 {% csrf_token %}
-<div class="form-floating mb-3">
+<div class="form-floating auth-floating mb-3">
     <input type="email"
            name="{{ form.email.name }}"
-           class="form-control"
+           class="form-control auth-input"
            id="id_email"
            value="{{ form.email.value|default:'' }}"
            placeholder="name@ecample.com"
            required>
     <label for="id_email">Имейл адрес</label>
 </div>
-<div class="form-floating mb-4">
+<div class="form-floating auth-floating mb-4">
     <input type="password"
            name="{{ form.password.name }}"
-           class="form-control"
+           class="form-control auth-input"
            id="id_password"
            placeholder="Password"
            required>
     <label for="id_password">Парола</label>
 </div>
-<button type="submit" class="btn btn-primary w-100">Вход</button>
+<button type="submit" class="btn btn-brown w-100 mb-2">Вход</button>
 <a href="{% url 'accounts:password_reset' %}" class="text-muted small">Забравена парола?</a>
-<p class="text-center mt-2 mb-0">
-    Нямате профил? <a href="{% url 'accounts:register' %}">Регистрирайте се</a>
+<p class="text-center mt-3 mb-0">
+    Нямате профил? <a href="{% url 'accounts:register' %}" class="brown-main-title">Регистрирайте се</a>
 </p>

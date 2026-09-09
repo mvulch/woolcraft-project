@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.urls import reverse
 from orders.models import Address
-from .models import CustomRequest
+from .models import CustomRequest, CustomRequestImage
 from .forms import CustomRequestForm, CustomRequestMessageForm, OfferPriceForm
 from staff.utils import notify_staff
 from staff.models import Notification
@@ -27,6 +27,8 @@ def custom_request_create_view(request):
             custom_request = form.save(commit=False)
             custom_request.user = request.user
             custom_request.save()
+            for image in form.cleaned_data.get('images', []):
+                CustomRequestImage.objects.create(request=custom_request, image=image)
             notify_staff(
                 type=Notification.Type.NEW_REQUEST,
                 message=f'Нова персонализирана заявка #{custom_request.id} от {custom_request.user.get_full_name()}',

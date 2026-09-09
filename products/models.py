@@ -96,12 +96,21 @@ class ProductReview(models.Model):
     def __str__(self):
         return f'Review of {self.product.name} from {self.user.email}'
 
+class ProductReviewImage(models.Model):
+    review = models.ForeignKey(ProductReview, on_delete=models.CASCADE, related_name='extra_images')
+    image = CloudinaryField('Снимка към отзив', resource_type='image')
+    class Meta:
+        verbose_name = 'Снимка към отзив'
+        verbose_name_plural = 'Снимки към отзиви'
+    def __str__(self):
+        return f'Снимка за отзив #{self.review_id}'
+
 class VideoCourse(models.Model):
 
     class Difficulty(models.TextChoices):
-        BEGINNER = "BEGINNER", "Beginner"
-        INTERMEDIATE = "INTERMEDIATE", "Intermediate"
-        ADVANCED = "ADVANCED", "Advanced"
+        BEGINNER = "BEGINNER", "За начинаещи"
+        INTERMEDIATE = "INTERMEDIATE", "Средна трудност"
+        ADVANCED = "ADVANCED", "За напреднали"
 
     product = models.OneToOneField(Product, on_delete=models.CASCADE, related_name = "video_course")
     duration_minutes = models.PositiveIntegerField(blank=False)

@@ -4,19 +4,19 @@
 {% block content %}
 <div class="d-flex justify-content-between align-items-center my-5">
     <h3 class="fw-bold mb-0">Персонализирани заявки</h3>
-    <a href="{% url 'staff:staff_dashboard' %}" class="btn btn-outline-secondary btn-sm">
+    <a href="{% url 'staff:staff_dashboard' %}" class="btn btn-outline-less-brown btn-sm">
         <i class="bi bi-arrow-left me-1"></i>Табло
     </a>
 </div>
 
 <div class="d-flex gap-2 mb-4 flex-wrap">
     <a href="{% url 'staff:staff_custom_requests_list' %}"
-       class="btn btn-sm {% if not current_status %}btn-success{% else %}btn-outline-secondary{% endif %}">
+       class="btn btn-sm {% if not current_status %}btn-brown{% else %}btn-outline-brown{% endif %}">
         Всички
     </a>
     {% for value, label in type_choices %}
     <a href="?status={{ value }}"
-       class="btn btn-sm {% if current_status == value %}btn-success{% else %}btn-outline-secondary{% endif %}">
+       class="btn btn-sm {% if current_status == value %}btn-less-brown{% else %}btn-outline-less-brown{% endif %}">
         {{ label }}
     </a>
     {% endfor %}
@@ -50,7 +50,7 @@
                     </td>
                     <td>
                         <a href="{% url 'custom_requests:custom_request_detail' custom_request.id %}"
-                           class="btn btn-outline-success btn-sm">
+                           class="btn btn-outline-brown btn-sm">
                             Преглед
                         </a>
                     </td>

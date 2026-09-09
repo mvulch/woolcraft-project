@@ -4,7 +4,7 @@
 {% block content %}
 <div class="d-flex justify-content-between align-items-center my-5">
     <h3 class="fw-bold mb-0">Поръчки с адрес: {{ address.street }}, {{ address.city }}</h3>
-    <a href="{% url 'orders:address_list' %}" class="btn btn-outline-secondary btn-sm">
+    <a href="{% url 'orders:address_list' %}" class="btn btn-outline-less-brown btn-sm">
         <i class="bi bi-arrow-left me-1"></i>Моите адреси
     </a>
 </div>
@@ -34,7 +34,7 @@
                         </td>
                         <td>{{ order.total_price }} €</td>
                         <td>
-                            <a href="{% url 'orders:order_detail' order.id %}" class="btn btn-outline-success btn-sm">
+                            <a href="{% url 'orders:order_detail' order.id %}" class="btn btn-outline-brown btn-sm">
                                 Преглед
                             </a>
                         </td>
@@ -75,7 +75,7 @@
                         </td>
                         <td class="fw-medium">{{ custom_request.title }}</td>
                         <td>
-                            <a href="{% url 'custom_requests:custom_request_detail' custom_request.id %}" class="btn btn-outline-success btn-sm">
+                            <a href="{% url 'custom_requests:custom_request_detail' custom_request.id %}" class="btn btn-outline-less-brown btn-sm">
                                 Преглед
                             </a>
                         </td>

@@ -10,11 +10,11 @@
         {% if is_staff_view %}Поръчки{% else %}Моите поръчки{% endif %}
     </h3>
     {% if is_staff_view %}
-    <a href="{% url 'staff:staff_dashboard' %}" class="btn btn-outline-secondary btn-sm">
+    <a href="{% url 'staff:staff_dashboard' %}" class="btn btn-outline-less-brown btn-sm">
         <i class="bi bi-arrow-left me-1"></i>Табло
     </a>
     {% else %}
-    <a href="{% url 'orders:cart_detail' %}" class="btn btn-success btn-sm">
+    <a href="{% url 'orders:cart_detail' %}" class="btn btn-brown btn-sm">
         <i class="bi bi-plus-lg me-1"></i>Нова поръчка
     </a>
     {% endif %}
@@ -23,12 +23,12 @@
 {% if is_staff_view %}
 <div class="d-flex gap-2 mb-4 flex-wrap">
     <a href="{% url 'staff:staff_orders_list' %}"
-       class="btn btn-sm {% if not current_status %}btn-success{% else %}btn-outline-secondary{% endif %}">
+       class="btn btn-sm {% if not current_status %}btn-brown{% else %}btn-outline-brown{% endif %}">
         Всички
     </a>
     {% for value, label in status_choices %}
     <a href="?status={{ value }}"
-       class="btn btn-sm {% if current_status == value %}btn-success{% else %}btn-outline-secondary{% endif %}">
+       class="btn btn-sm {% if current_status == value %}btn-less-brown{% else %}btn-outline-less-brown{% endif %}">
         {{ label }}
     </a>
     {% endfor %}
@@ -68,10 +68,10 @@
                 <td class="fw-bold text-success">{{ order.total_price }} €</td>
                 <td>
                     {% if is_staff_view %}
-                    <a href="{% url 'staff:staff_order_detail' order.id %}" class="btn btn-outline-success btn-sm">Преглед</a>
+                    <a href="{% url 'staff:staff_order_detail' order.id %}" class="btn btn-outline-brown btn-sm">Преглед</a>
                     {% else %}
                     <a href="{% url 'orders:order_detail' order.id %}"
-                       class="btn btn-outline-success btn-sm">Преглед</a>
+                       class="btn btn-outline-brown btn-sm">Преглед</a>
                     {% endif %}
                 </td>
             </tr>
@@ -84,7 +84,7 @@
                     <div class="py-3">
                         <i class="bi bi-bag-x text-muted" style="font-size: 3rem;"></i>
                         <p class="text-muted mt-3">Нямате направени поръчки.</p>
-                        <a href="{% url 'products:all_products' %}" class="btn btn-success btn-sm">
+                        <a href="{% url 'products:all_products' %}" class="btn btn-brown btn-sm">
                             Разгледай продуктите
                         </a>
                     </div>

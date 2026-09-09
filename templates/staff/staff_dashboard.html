@@ -3,15 +3,14 @@
 {% block title %}Административен панел | WoolCraft{% endblock %}
 {% block content %}
 <div class="h3-center fw-bold my-5 mb-4">
-    <h3 class="h3-center fw-bold mb-4">Административен панел</h3>
+    <h3 class="h3-center text-dark fw-bold mb-4">Административен панел</h3>
     {% if request.user.is_superuser %}
-    <a href="{% url 'staff:staff_manage_staff' %}" class="btn btn-outline-dark btn-md">
+    <a href="{% url 'staff:staff_manage_staff' %}" class="btn btn-outline-less-brown btn-md">
         <i class="bi bi-people me-1"></i>Управление на персонал
     </a>
     {% endif %}
 </div>
 <div class="row justify-content-center">
-
     <div class="col-6 col-lg-2">
         <div class="card border-0 shadow-sm text-center p-3">
             <i class="bi bi-bell text-primary fs-2 mb-2"></i>
@@ -57,12 +56,12 @@
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h5 class="fw-bold mb-0">Последни известия</h5>
                     <a href="{% url 'staff:staff_notifications' %}"
-                       class="btn btn-outline-success btn-sm">Всички</a>
+                       class="btn btn-outline-brown btn-sm">Всички</a>
                 </div>
                 {% for notif_recipient in recent_notifications %}
                 <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
                     <div>
-                        <a href="{% url 'staff:staff_notification_read' notif_recipient.notification.id %}" class="text-decoration-none fw-medium">#{{ notif_recipient.notification.id }}</a>
+                        <a href="{% url 'staff:staff_notification_read' notif_recipient.notification.id %}" class="text-decoration-none brown-main-title fw-medium">#{{ notif_recipient.notification.id }}</a>
                         <p class="text-muted small mb-0">{{ notif_recipient.notification.message }}</p>
                         <p class="text-muted small mb-0">{{ notif_recipient.notification.created_at|date:"d.m.Y H:i" }}</p>
                     </div>
@@ -88,20 +87,21 @@
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h5 class="fw-bold mb-0">Последни поръчки</h5>
                     <a href="{% url 'staff:staff_orders_list' %}"
-                       class="btn btn-outline-success btn-sm">Всички</a>
+                       class="btn btn-outline-brown btn-sm">Всички</a>
                 </div>
                 {% for order in last_orders %}
                 <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
                     <div>
 
                         <a href="{% url 'staff:staff_order_detail' order.id %}"
-                           class="text-decoration-none fw-medium">#{{ order.id }}</a>
+                           class="text-decoration-none brown-main-title fw-medium">#{{ order.id }}</a>
                         <p class="text-muted small mb-0">{{ order.user.get_full_name }}</p>
+                        <p class="text-muted small mb-0">{{ order.total_price }} €</p>
 
                     </div>
                     <div class="text-end">
                         {% include 'includes/order_status_color.html' %}
-                        <p class="text-muted small mb-0">{{ order.total_price }} €</p>
+                        <p class="text-muted small mt-1 mb-0">{{ order.created_at|date:"d.m.Y H:i" }}</p>
                     </div>
                 </div>
                 {% empty %}
@@ -114,19 +114,19 @@
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h5 class="fw-bold mb-0">Последни персонализирани заявки</h5>
                     <a href="{% url 'staff:staff_custom_requests_list' %}"
-                       class="btn btn-outline-success btn-sm">Всички</a>
+                       class="btn btn-outline-brown btn-sm">Всички</a>
                 </div>
                 {% for custom_request in recent_custom_requests %}
                 <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
                     <div>
                         <a href="{% url 'custom_requests:custom_request_detail' custom_request.id %}"
-                           class="text-decoration-none fw-medium">#{{ custom_request.id }}</a>
+                           class="text-decoration-none brown-main-title fw-medium">#{{ custom_request.id }}</a>
                         <p class="text-muted small mb-0">{{ custom_request.title }}</p>
                         <p class="text-muted small mb-0">{{ custom_request.user.get_full_name }}</p>
                     </div>
                     <div class="text-end">
                         {% include 'includes/custom_requests_color.html' %}
-                        <p class="text-muted small mb-0">{{ custom_request.created_at|date:"d.m.Y H:i"  }}</p>
+                        <p class="text-muted small mt-1 mb-0">{{ custom_request.created_at|date:"d.m.Y H:i"  }}</p>
                     </div>
                 </div>
                 {% empty %}
@@ -139,19 +139,20 @@
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h5 class="fw-bold mb-0">Последни неприключени дискусии</h5>
                     <a href="{% url 'staff:staff_contact_messages' %}"
-                       class="btn btn-outline-success btn-sm">Всички</a>
+                       class="btn btn-outline-brown btn-sm">Всички</a>
                 </div>
                 {% for msg in last_messages %}
                 <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
                     <div>
                         <a href="{% url 'communication:contact_detail' msg.id %}"
-                           class="text-decoration-none fw-medium">#{{ msg.id }}</a>
+                           class="text-decoration-none brown-main-title fw-medium">#{{ msg.id }}</a>
                         <p class="text-muted small mb-0">{{ msg.user.get_full_name }}</p>
                     </div>
                     <div class="text-end">
                         <span class="badge {% if msg.is_resolved %}bg-success{% else %}bg-warning text-dark{% endif %}">
                             {% if msg.is_resolved %}Приключено{% else %}Отворено{% endif %}
                         </span>
+                        <p class="text-muted small mt-1 mb-0">{{ msg.created_at|date:"d.m.Y H:i" }}</p>
                     </div>
                 </div>
                 {% empty %}
@@ -164,13 +165,13 @@
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h5 class="fw-bold mb-0">Последни коментари за продукти</h5>
                     <a href="{% url 'staff:staff_reviews_list' %}"
-                       class="btn btn-outline-success btn-sm">Всички</a>
+                       class="btn btn-outline-brown btn-sm">Всички</a>
                 </div>
                 {% for rev in recent_reviews %}
                 <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
                     <div>
                         <a href="{% url 'staff:staff_approve_review' rev.id %}"
-                           class="text-decoration-none fw-medium">#{{ rev.id }}</a>
+                           class="text-decoration-none brown-main-title fw-medium">#{{ rev.id }}</a>
                         <p class="text-muted small mb-0">{{ rev.product.name }}</p>
                         <p class="text-muted small mb-0">{{ rev.user.get_full_name }}</p>
                     </div>
@@ -178,6 +179,7 @@
                         <span class="badge {% if rev.is_published %}bg-success{% else %}bg-warning text-dark{% endif %}">
                             {% if rev.is_published %}Одобрено{% else %}Чакащо одобрение{% endif %}
                         </span>
+                        <p class="text-muted small mt-1 mb-0">{{ rev.created_at|date:"d.m.Y H:i" }}</p>
                     </div>
                 </div>
                 {% empty %}

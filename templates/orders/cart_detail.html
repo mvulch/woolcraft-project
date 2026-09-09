@@ -8,7 +8,7 @@
 <div class="text-center py-5">
     <i class="bi bi-cart-x text-muted" style="font-size: 4rem;"></i>
     <p class="text-muted mt-3 fs-5">Количката ти е празна.</p>
-    <a href="{% url 'products:all_products' %}" class="btn btn-success mt-2">
+    <a href="{% url 'products:all_products' %}" class="btn btn-less-brown mt-2">
         <i class="bi bi-arrow-left me-1"></i> Разгледай продуктите
     </a>
 </div>
@@ -97,12 +97,12 @@
                     <i class="bi bi-credit-card me-1"></i> Към завършване на поръчка
                 </a>
                 {% else %}
-                <a href="{% url 'accounts:login' %}" class="btn btn-success w-100">
+                <a href="{% url 'accounts:login' %}" class="btn btn-brown w-100">
                     Влез, за да продължиш
                 </a>
                 <p class="text-muted small text-center mt-2 mb-0">
                     или
-                    <a href="{% url 'accounts:register' %}" class="text-success">създай акаунт</a>
+                    <a href="{% url 'accounts:register' %}" class="brown-main-title">създай акаунт</a>
                 </p>
                 {% endif %}
             </div>

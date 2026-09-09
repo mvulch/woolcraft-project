@@ -4,22 +4,22 @@
 {% block content %}
 <div class="d-flex justify-content-between align-items-center my-5">
     <h3 class="fw-bold mb-0">Коментари</h3>
-    <a href="{% url 'staff:staff_dashboard' %}" class="btn btn-outline-secondary btn-sm">
+    <a href="{% url 'staff:staff_dashboard' %}" class="btn btn-outline-less-brown btn-sm">
         <i class="bi bi-arrow-left me-1"></i>Табло
     </a>
 </div>
 
 <div class="d-flex gap-2 mb-4 flex-wrap">
-    <a href="?filter=not_published" class="btn btn-sm {% if current_filter == 'not_published' %}btn-success{% else %}btn-outline-secondary{% endif %}">
+    <a href="?filter=not_published" class="btn btn-sm {% if current_filter == 'not_published' %}btn-less-brown{% else %}btn-outline-less-brown{% endif %}">
         Чакащи одобрение
     </a>
-    <a href="?filter=published" class="btn btn-sm {% if current_filter == 'published' %}btn-success{% else %}btn-outline-secondary{% endif %}">
+    <a href="?filter=published" class="btn btn-sm {% if current_filter == 'published' %}btn-less-brown{% else %}btn-outline-less-brown{% endif %}">
         Одобрени
     </a>
-    <a href="?filter=rejected" class="btn btn-sm {% if current_filter == 'rejected' %}btn-success{% else %}btn-outline-secondary{% endif %}">
+    <a href="?filter=rejected" class="btn btn-sm {% if current_filter == 'rejected' %}btn-less-brown{% else %}btn-outline-less-brown{% endif %}">
         Отхвърлени
     </a>
-    <a href="?filter=all" class="btn btn-sm {% if current_filter == 'all' %}btn-success{% else %}btn-outline-secondary{% endif %}">
+    <a href="?filter=all" class="btn btn-sm {% if current_filter == 'all' %}btn-brown{% else %}btn-outline-brown{% endif %}">
         Всички
     </a>
 </div>
@@ -64,7 +64,7 @@
                         {% endif %}
                     </td>
                     <td>
-                        {% if review.image %}
+                        {% if review.image or review.extra_images.all %}
                             <i class="bi bi-check-circle-fill text-success ms-5"></i>
                         {% else %}
                             <i class="bi bi-x-circle text-danger ms-5"></i>
@@ -87,7 +87,7 @@
                                     Отхвърли
                                 </button>
                             </form>
-                            <a href="{% url 'staff:staff_approve_review' review.id %}" class="btn btn-outline-success btn-sm">
+                            <a href="{% url 'staff:staff_approve_review' review.id %}" class="btn btn-outline-brown btn-sm">
                                 Преглед
                             </a>
                         </div>

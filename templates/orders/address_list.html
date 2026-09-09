@@ -3,7 +3,7 @@
 {% block content %}
 <div class="d-flex justify-content-between align-items-center my-5">
     <h3 class="fw-bold mb-0">Моите адреси</h3>
-    <a href="{% url 'orders:address_create' %}" class="btn btn-success btn-sm">
+    <a href="{% url 'orders:address_create' %}" class="btn btn-brown btn-sm">
         <i class="bi bi-plus-lg me-1"></i>Добави адрес
     </a>
 </div>
@@ -26,7 +26,7 @@
                     <!-- controls - edit or see usage, set default (if it is not), delete-->
                     <div class="d-flex flex-column gap-2">
                         {% if address.orders_count or address.requests_count %}
-                            <a href="{% url 'orders:address_usage' address.id %}" class="btn btn-outline-secondary btn-sm" title="Виж поръчки с този адрес">
+                            <a href="{% url 'orders:address_usage' address.id %}" class="btn btn-outline-less-brown btn-sm" title="Виж поръчки с този адрес">
                                 <i class="bi bi-box-seam"></i>
                             </a>
                         {% else %}
@@ -58,7 +58,7 @@
     <div class="text-center py-5">
         <i class="bi bi-geo-alt text-muted" style="font-size: 3rem;"></i>
         <p class="text-muted mt-3">Нямате запазени адреси.</p>
-        <a href="{% url 'orders:address_create' %}" class="btn btn-success">Добавете адрес</a>
+        <a href="{% url 'orders:address_create' %}" class="btn btn-brown">Добавете адрес</a>
     </div>
 {% endif %}
 
