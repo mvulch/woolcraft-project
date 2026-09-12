@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Въпроси към уроци | Служителски панел{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center my-5">
+    <h3 class="fw-bold mb-0">Въпроси към уроци</h3>
+    <a href="{% url 'staff:staff_dashboard' %}" class="btn btn-outline-less-brown btn-sm">
+        <i class="bi bi-arrow-left me-1"></i>Табло
+    </a>
+</div>
+
+<div class="d-flex gap-2 mb-4 flex-wrap">
+    <a href="?filter=all" class="btn btn-sm {% if current_filter == 'all' %}btn-brown{% else %}btn-outline-brown{% endif %}">
+        Всички
+    </a>
+    <a href="?filter=unanswered" class="btn btn-sm {% if current_filter == 'unanswered' %}btn-less-brown{% else %}btn-outline-less-brown{% endif %}">
+        Без отговор
+    </a>
+    <a href="?filter=answered" class="btn btn-sm {% if current_filter == 'answered' %}btn-less-brown{% else %}btn-outline-less-brown{% endif %}">
+        Отговорени
+    </a>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>#</th>
+                    <th>Потребител</th>
+                    <th>Курс / Урок</th>
+                    <th>Въпрос</th>
+                    <th>Дата</th>
+                    <th>Статус</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for question in page_obj %}
+                <tr>
+                    <td class="text-muted small">#{{ question.id }}</td>
+                    <td>
+                        <p class="mb-0">{{ question.user.get_full_name }}</p>
+                        <p class="text-muted small mb-0">{{ question.user.email }}</p>
+                    </td>
+                    <td>
+                        <p class="mb-0 fw-medium">{{ question.lesson.course.product.name }}</p>
+                        <p class="text-muted small mb-0">{{ question.lesson.title }}</p>
+                    </td>
+                    <td class="small">{{ question.text|truncatewords:12 }}</td>
+                    <td class="text-muted small">{{ question.created_at|date:"d.m.Y H:i" }}</td>
+                    <td>
+                        {% if question.reply_count > 0 %}
+                            <span class="badge bg-success">Отговорено</span>
+                        {% else %}
+                            <span class="badge bg-warning text-dark">Без отговор</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{{ question.lesson.get_url }}" class="btn btn-outline-brown btn-sm">
+                            {% if question.reply_count > 0 %}Преглед{% else %}Отговори{% endif %}
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center text-muted py-4">Няма въпроси към уроци.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% include 'includes/paginator.html' with extra_params="filter="|add:current_filter %}
+{% endblock %}

@@ -20,6 +20,13 @@ class Category(models.Model):
         return self.name
 
 class Product(models.Model):
+    class Season(models.TextChoices):
+        SPRING = "SPRING", "Пролет"
+        SUMMER = "SUMMER", "Лято"
+        AUTUMN = "AUTUMN", "Есен"
+        WINTER = "WINTER", "Зима"
+        MULTISEASON = "MULTISEASON", "Целогодишен"
+
     name = models.CharField(max_length=120, blank=False)
     description = models.TextField(blank=True)
     price = models.DecimalField(max_digits=8, decimal_places=2)
@@ -30,6 +37,7 @@ class Product(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     category = models.ForeignKey(Category, on_delete=models.PROTECT, blank=False)
     slug = models.SlugField(max_length=100, blank=False,unique=True)
+    season = models.CharField(max_length=20, choices=Season.choices, default=Season.MULTISEASON, verbose_name='Сезон')
 
     def get_quantity_range(self):
         return range(1, self.stock_quantity + 1)

@@ -14,10 +14,10 @@ def staff_required(view_func):
         return view_func(request, *args, **kwargs)
     return wrapper
 
-def notify_staff(type, message, link='', exclude_user=None):
+def notify_staff(type, message, link='', exclude_user=None, superusers_only=False):
     """creates notification for the staff users when users trigger it"""
     User = get_user_model()
-    staff_users = User.objects.filter(is_staff=True)
+    staff_users = User.objects.filter(is_superuser=True) if superusers_only else User.objects.filter(is_staff=True)
     if exclude_user is not None:
         staff_users = staff_users.exclude(pk=exclude_user.pk)
     notification = Notification.objects.create(

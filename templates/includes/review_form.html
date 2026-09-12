@@ -1,10 +1,11 @@
+{% load image_filters %}
 {% if show_product_header %}
 <div class="text-center mb-4">
     <h2 class="fw-bold mb-4">{{ form_title|default:"Напишете отзив за продукта" }}</h2>
     {% if product %}
         {% with main_image=product.get_main_image %}
         {% if main_image %}
-        <img src="{{ main_image.image.url }}" alt="{{ product.name }}" class="rounded mb-2"
+        <img src="{{ main_image.image.url|cld_optimize }}" alt="{{ product.name }}" class="rounded mb-2"
              style="max-height: 180px; object-fit: cover;">
         {% endif %}
         {% endwith %}

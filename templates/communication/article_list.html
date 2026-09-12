@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load image_filters %}
 {% block title %}Статии | WoolCraft{% endblock %}
 {% block content %}
 <h3 class="fw-bold my-5">Статии</h3>
@@ -8,10 +9,10 @@
 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-4">
     {% for article in page_obj %}
     <div class="col">
-        <div class="card h-100 border-0 shadow-sm">
+        <div class="card h-100 border-0 shadow-sm article-card">
             {% with main_image=article.get_main_image %}
                 {% if main_image %}
-                    <img src="{{ main_image.image.url }}"
+                    <img src="{{ main_image.image.url|cld_optimize }}"
                          alt="{{ main_image.alt_text|default:article.title }}"
                          class="card-img-top"
                          style="height: 200px; object-fit: cover;">

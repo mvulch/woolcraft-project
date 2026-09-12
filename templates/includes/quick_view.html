@@ -1,8 +1,9 @@
+{% load image_filters %}
 <div class="row g-3">
     <div class="col-12 col-md-5">
         {% with main_image=product.get_main_image %}
             {% if main_image %}
-                <img src="{{ main_image.image.url }}"
+                <img src="{{ main_image.image.url|cld_optimize }}"
                      class="img-fluid rounded"
                      alt="{{ product.name }}"
                      style="max-height: 300px; object-fit: cover; width: 100%;">

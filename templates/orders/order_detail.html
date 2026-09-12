@@ -125,8 +125,8 @@
     </div>
     {% if is_staff_view %}
     <div class="col-12 col-lg-4">
-        <div class="card border-0 shadow-sm sticky-top m-4 p-1" style="top: 130px; z-index: 0; background-color: #e0ebeb; border-radius: 1.5rem;">
-            <div class="card-body" style="background-color: #e0ebeb; border-radius: 1.5rem;">
+        <div class="card border-0 shadow-sm sticky-top info-panel-sticky m-4 p-1" style="top: 130px; z-index: 0;">
+            <div class="card-body info-panel-sticky">
             <h5 class="fw-bold mb-3">Информация</h5>
                 <div class="row g-2">
                     <div class="col-5 text-muted small">Потребител:</div>
@@ -137,7 +137,7 @@
                     <div class="col-7 small">{{ order.created_at|date:"d.m.Y H:i" }}</div>
                 </div>
             </div>
-            <div class="card-body" style="background-color: #e0ebeb; border-radius: 1.5rem;">
+            <div class="card-body info-panel-sticky">
                 <h5 class="fw-bold mb-3">Управление на статус</h5>
                 <div class="mb-3">
                     {% include 'includes/order_status_color.html' %}
@@ -156,7 +156,7 @@
                         </option>
                         {% endfor %}
                     </select>
-                    <button type="submit" class="btn btn-success w-100">
+                    <button type="submit" class="btn btn-less-brown w-100">
                         Запази статуса
                     </button>
                 </form>

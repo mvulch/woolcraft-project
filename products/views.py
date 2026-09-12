@@ -16,13 +16,26 @@ from django.contrib.auth.decorators import login_required
 from django.conf import settings
 
 
+MONTH_TO_SEASON = {
+    12: Product.Season.WINTER, 1: Product.Season.WINTER, 2: Product.Season.WINTER,
+    3: Product.Season.SPRING, 4: Product.Season.SPRING, 5: Product.Season.SPRING,
+    6: Product.Season.SUMMER, 7: Product.Season.SUMMER, 8: Product.Season.SUMMER,
+    9: Product.Season.AUTUMN, 10: Product.Season.AUTUMN, 11: Product.Season.AUTUMN,
+}
+
 # Create your views here.
 def home_view(request):
     latest_products = Product.objects.filter(is_active=True).order_by('-created_at').prefetch_related('images')[:8]
     recommended_articles = Article.objects.filter(is_published=True).order_by('-created_at').prefetch_related('images')[:4]
+    current_season = MONTH_TO_SEASON[timezone.now().month]
+    seasonal_products = Product.objects.filter(
+        is_active=True, season__in=[current_season]
+    ).order_by('-created_at').prefetch_related('images')[:4]
     return render(request, 'home.html', {
         'latest_products': latest_products,
         'recommended_articles': recommended_articles,
+        'seasonal_products': seasonal_products,
+        'current_season_label': Product.Season(current_season).label,
     })
 def product_detail_view(request,category_slug,slug):
     product_detail = get_object_or_404(Product.objects
@@ -99,6 +112,13 @@ def category_products_view(request, category_slug=None):
         category = get_object_or_404(Category,slug=category_slug)
         subcategory_id = category.subcategories.values('id')
         products = products.filter(Q(category=category) | Q(category_id__in=subcategory_id))
+
+    current_season = request.GET.get('season', '')
+    if current_season in Product.Season.values:
+        products = products.filter(season=current_season)
+    else:
+        current_season = ''
+
     sort_options = {
         'newest': '-created_at',
         'oldest': 'created_at',
@@ -117,6 +137,8 @@ def category_products_view(request, category_slug=None):
         'category': category,
         'categories': categories,
         'current_sort': current_sort,
+        'current_season': current_season,
+        'season_choices': Product.Season.choices,
         'page_obj': page_obj
     }
     return render(request, 'products/category_products.html', context)
@@ -199,6 +221,7 @@ def _submit_course_question(request, current_lesson):
         message=f'Нов въпрос от {request.user.get_full_name()} към урок "{current_lesson.title}".',
         link=current_lesson.get_url(),
         exclude_user=request.user,
+        superusers_only=True,
     )
     messages.success(request, 'Въпросът е изпратен.')
     return form, True
@@ -290,7 +313,7 @@ def course_watch_view(request, course_id, lesson_id=None):
 
     questions = []
     if has_access:
-        questions = current_lesson.questions.select_related('user').prefetch_related('replies__user')
+        questions = current_lesson.questions.select_related('user').prefetch_related('replies__user').order_by('-created_at')
 
     context = {
         'course': course,

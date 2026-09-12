@@ -26,14 +26,36 @@
 <div class="row">
     <!-- products -->
     <div class="col-12 ">
-        <div class="d-flex justify-content-between align-items-center my-2">
+        <div class="d-flex justify-content-between align-items-center my-2 mb-5">
             <h3 class="fw-bold mb-0">
                 {% if category %}{{ category.name }}{% else %}Всички продукти{% endif %}
             </h3>
             <div class="d-flex align-items-center gap-3">
                 <span class="text-muted small d-none d-sm-inline">{{ page_obj.paginator.count }} продукта</span>
                 <div class="dropdown">
-                    <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button"
+                    <button class="btn btn-outline-less-brown btn-sm dropdown-toggle" type="button"
+                            data-bs-toggle="dropdown">
+                        Сезон:
+                        {% if current_season %}
+                            {% for value, label in season_choices %}{% if value == current_season %}{{ label }}{% endif %}{% endfor %}
+                        {% else %}Всички
+                        {% endif %}
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <a class="dropdown-item {% if not current_season %}active{% endif %}"
+                               href="?sort={{ current_sort }}&page=1">Всички</a>
+                        </li>
+                        {% for value, label in season_choices %}
+                        <li>
+                            <a class="dropdown-item {% if current_season == value %}active{% endif %}"
+                               href="?sort={{ current_sort }}&season={{ value }}&page=1">{{ label }}</a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="dropdown">
+                    <button class="btn btn-outline-less-brown btn-sm dropdown-toggle" type="button"
                             data-bs-toggle="dropdown">
                         Сортирай:
                         {% if current_sort == 'price_asc' %}Цена ↑
@@ -47,29 +69,29 @@
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li>
                             <a class="dropdown-item {% if current_sort == 'newest' %}active{% endif %}"
-                               href="?sort=newest&page=1">Най-нови</a>
+                               href="?sort=newest&season={{ current_season }}&page=1">Най-нови</a>
                         </li>
                         <li>
                             <a class="dropdown-item {% if current_sort == 'oldest' %}active{% endif %}"
-                               href="?sort=oldest&page=1">Най-стари</a>
+                               href="?sort=oldest&season={{ current_season }}&page=1">Най-стари</a>
                         </li>
                         <li><hr class="dropdown-divider"></li>
                         <li>
                             <a class="dropdown-item {% if current_sort == 'price_asc' %}active{% endif %}"
-                               href="?sort=price_asc&page=1">Цена: ниска → висока</a>
+                               href="?sort=price_asc&season={{ current_season }}&page=1">Цена: ниска → висока</a>
                         </li>
                         <li>
                             <a class="dropdown-item {% if current_sort == 'price_desc' %}active{% endif %}"
-                               href="?sort=price_desc&page=1">Цена: висока → ниска</a>
+                               href="?sort=price_desc&season={{ current_season }}&page=1">Цена: висока → ниска</a>
                         </li>
                         <li><hr class="dropdown-divider"></li>
                         <li>
                             <a class="dropdown-item {% if current_sort == 'name_asc' %}active{% endif %}"
-                               href="?sort=name_asc&page=1">Име: А-Я</a>
+                               href="?sort=name_asc&season={{ current_season }}&page=1">Име: А-Я</a>
                         </li>
                         <li>
                             <a class="dropdown-item {% if current_sort == 'name_desc' %}active{% endif %}"
-                               href="?sort=name_desc&page=1">Име: Я-А</a>
+                               href="?sort=name_desc&season={{ current_season }}&page=1">Име: Я-А</a>
                         </li>
                     </ul>
                 </div>
@@ -77,14 +99,14 @@
         </div>
 
         {% if page_obj %}
-        <div class="row row-cols-2 row-cols-md-4 row-cols-lg-5 g-3">
+        <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3">
             {% for product in page_obj %}
             <div class="col">
                 {% include 'includes/product_card.html' %}
             </div>
             {% endfor %}
         </div>
-        {% include 'includes/paginator.html' with extra_params="sort="|add:current_sort %}
+        {% include 'includes/paginator.html' with extra_params="sort="|add:current_sort|add:"&season="|add:current_season %}
 
     </div>
     {% else %}

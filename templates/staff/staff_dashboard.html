@@ -46,6 +46,15 @@
             <p class="text-muted small mb-0">Чакащи коментари</p>
         </div>
     </div>
+    {% if request.user.is_superuser %}
+    <div class="col-6 col-lg-2">
+        <div class="card border-0 shadow-sm text-center p-3">
+            <i class="bi bi-mortarboard text-success fs-2 mb-2"></i>
+            <h3 class="fw-bold mb-0">{{ pending_course_questions }}</h3>
+            <p class="text-muted small mb-0">Въпроси без отговор</p>
+        </div>
+    </div>
+    {% endif %}
 </div>
 
 
@@ -187,6 +196,36 @@
                 {% endfor %}
             </div>
         </div>
+
+        {% if request.user.is_superuser %}
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold mb-0">Последни въпроси към уроци</h5>
+                    <a href="{% url 'staff:staff_course_questions_list' %}"
+                       class="btn btn-outline-brown btn-sm">Всички</a>
+                </div>
+                {% for question in recent_course_questions %}
+                <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
+                    <div>
+                        <a href="{{ question.lesson.get_url }}"
+                           class="text-decoration-none brown-main-title fw-medium">#{{ question.id }}</a>
+                        <p class="text-muted small mb-0">{{ question.lesson.course.product.name }}</p>
+                        <p class="text-muted small mb-0">{{ question.user.get_full_name }}</p>
+                    </div>
+                    <div class="text-end">
+                        <span class="badge {% if question.reply_count > 0 %}bg-success{% else %}bg-warning text-dark{% endif %}">
+                            {% if question.reply_count > 0 %}Отговорено{% else %}Без отговор{% endif %}
+                        </span>
+                        <p class="text-muted small mt-1 mb-0">{{ question.created_at|date:"d.m.Y H:i" }}</p>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-muted text-center py-3">Няма въпроси към уроци.</p>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
 
     </div>
 </div>

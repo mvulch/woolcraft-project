@@ -7,13 +7,13 @@ from django.contrib import messages
 from communication.models import ContactMessage
 from django.urls import reverse
 from orders.models import Order
-from products.models import ProductReview
+from products.models import ProductReview, CourseQuestion
 from custom_requests.models import CustomRequest
 from .models import Notification, NotificationRecipient
 from orders.models import OrderStatusHistory
 from orders.utils import build_order_timeline
 from django.db import transaction
-from django.db.models import F, Q, Sum
+from django.db.models import F, Q, Sum, Count
 from accounts.models import UserNotification
 from accounts.utils import notify_user
 from .utils import superuser_required, staff_required
@@ -46,6 +46,11 @@ def staff_dashboard_view(request):
         'custom_requests': custom_requests,
         'recent_custom_requests': recent_custom_requests,
     }
+    if request.user.is_superuser:
+        context['pending_course_questions'] = CourseQuestion.objects.annotate(
+            reply_count=Count('replies')).filter(reply_count=0).count()
+        context['recent_course_questions'] = CourseQuestion.objects.select_related(
+            'user', 'lesson__course__product').annotate(reply_count=Count('replies')).order_by('-created_at')[:4]
     return render(request, 'staff/staff_dashboard.html', context)
 
 @staff_required
@@ -206,6 +211,24 @@ def review_approve_view(request, review_id):
         total=Sum('rejection_count'))['total'] or 0
     context = {'review': review, 'total_rejections': total_rejections}
     return render(request, 'staff/staff_review_detail.html', context)
+
+@superuser_required
+def course_questions_view(request):
+    questions = CourseQuestion.objects.select_related('user', 'lesson__course__product').annotate(
+        reply_count=Count('replies'))
+    filter_status = request.GET.get('filter', 'all')
+    if filter_status == 'unanswered':
+        questions = questions.filter(reply_count=0)
+    elif filter_status == 'answered':
+        questions = questions.filter(reply_count__gt=0)
+    questions = questions.order_by('-created_at')
+    paginator = Paginator(questions, settings.PAGE_ITEMS)
+    page_obj = paginator.get_page(request.GET.get('page'))
+    context = {
+        'page_obj': page_obj,
+        'current_filter': filter_status,
+    }
+    return render(request, 'staff/staff_course_questions.html', context)
 
 @staff_required
 def custom_requests_list_view(request):

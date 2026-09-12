@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load image_filters %}
 {% block title %}{{ course.product.name }} | Моите курсове | WoolCraft{% endblock %}
 {% block content %}
 <div class="row my-5">
@@ -27,7 +28,7 @@
                             {{ forloop.counter }}. {{ lesson.title }}
                             {% if lesson.is_free_preview %}<span class="badge badge-less-brown ms-1">Безплатно</span>{% endif %}
                         </span>
-                        {% if lesson.duration_minutes %}<span class="small {% if current_lesson and lesson.id == current_lesson.id %}text-white-50{% else %}text-muted{% endif %}">{{ lesson.duration_minutes }} мин.</span>{% endif %}
+                        {% if lesson.duration_minutes %}<span class="small text-muted">{{ lesson.duration_minutes }} мин.</span>{% endif %}
                     </a>
                     {% else %}
                     <span class="list-group-item d-flex justify-content-between align-items-center text-muted">
@@ -87,7 +88,18 @@
         </div>
         {% endif %}
 
-        {% if has_access %}
+        {% else %}
+        <div class="alert alert-light border text-center py-5">
+            <i class="bi bi-hourglass-split text-muted" style="font-size: 3rem;"></i>
+            <p class="text-muted mt-3 mb-0">Курсът все още няма добавени уроци.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% if current_lesson and has_access %}
+<div class="row">
+    <div class="col-12">
         <hr>
         <h5 class="fw-bold mb-2">Въпроси към урока</h5>
         <p class="text-muted small">Въпросите тук се виждат от всички записани в курса и могат да получат отговор от ментор.</p>
@@ -112,20 +124,23 @@
         </div>
 
         {% for question in questions %}
-        <div class="chat-row {% if question.user == user %}chat-row-mine{% else %}chat-row-other{% endif %}">
-            <div class="chat-box {% if question.user == user %}chat-box-mine{% else %}chat-box-other{% endif %}" style="max-width: 90%;">
-                <p class="fw-medium mb-1">{{ question.user.get_full_name }} <span class="small fw-normal">{{ question.created_at|date:"d.m.Y H:i" }}</span></p>
+        <div class="card product-card shadow-sm p-2 mb-3">
+            <div class="card-body p-3">
+                <div class="d-flex justify-content-between mb-2">
+                    <p class="fw-bold mb-0">{{ question.user.get_full_name }}</p>
+                    <p class="text-muted small mb-0">{{ question.created_at|date:"d.m.Y H:i" }}</p>
+                </div>
                 <p class="mb-2 small">{{ question.text }}</p>
                 {% if question.image %}
-                <img src="{{ question.image.url }}" alt="" class="rounded mb-2" style="max-height: 160px;">
+                <img src="{{ question.image.url|cld_optimize }}" alt="" class="rounded mb-2 zoomable-img" style="max-height: 160px;">
                 {% endif %}
 
                 {% for reply in question.replies.all %}
                 <div class="chat-row {% if reply.user == user %}chat-row-mine{% else %}chat-row-other{% endif %} mt-2">
-                    <div class="chat-box {% if reply.user == user %}chat-box-mine{% else %}chat-box-other{% endif %}">
-                        <p class="fw-medium mb-1 small"><i class="bi bi-mortarboard-fill me-1"></i>{{ reply.user.get_full_name }} <span class="fw-normal">{{ reply.created_at|date:"d.m.Y H:i" }}</span></p>
+                    <div class="chat-box shadow-sm {% if reply.user == user %}chat-box-mine{% else %}chat-box-other chat-box-mentor-reply{% endif %}">
+                        <p class="fw-medium mb-1 small"><i class="bi bi-mortarboard-fill me-1"></i>{{ reply.user.get_full_name }} <span class="fw-normal ms-2">{{ reply.created_at|date:"d.m.Y H:i" }}</span></p>
                         <p class="mb-1 small">{{ reply.text }}</p>
-                        {% if reply.image %}<img src="{{ reply.image.url }}" alt="" class="rounded" style="max-height: 140px;">{% endif %}
+                        {% if reply.image %}<img src="{{ reply.image.url|cld_optimize }}" alt="" class="rounded zoomable-img" style="max-height: 140px;">{% endif %}
                     </div>
                 </div>
                 {% endfor %}
@@ -145,14 +160,7 @@
         {% empty %}
         <p class="text-muted">Все още няма въпроси към този урок.</p>
         {% endfor %}
-        {% endif %}
-
-        {% else %}
-        <div class="alert alert-light border text-center py-5">
-            <i class="bi bi-hourglass-split text-muted" style="font-size: 3rem;"></i>
-            <p class="text-muted mt-3 mb-0">Курсът все още няма добавени уроци.</p>
-        </div>
-        {% endif %}
     </div>
 </div>
+{% endif %}
 {% endblock %}

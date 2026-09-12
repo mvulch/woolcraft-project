@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load image_filters %}
 {% block title %}{{ article.title }} | WoolCraft{% endblock %}
 {% block content %}
 <div class="row justify-content-center ">
@@ -15,7 +16,7 @@
 
         {% with main_image=article.get_main_image %}
             {% if main_image %}
-            <img src="{{ main_image.image.url }}"
+            <img src="{{ main_image.image.url|cld_optimize }}"
                  alt="{{ main_image.alt_text|default:article.title }}"
                  class="img-fluid rounded shadow-sm mb-4 w-100"
                  style="max-height: 400px; object-fit: cover;">
@@ -43,11 +44,11 @@
                 {% for img in images %}
                 {% if not img.is_primary %}
                 <div class="col-6 col-md-4">
-                    <img src="{{ img.image.url }}"
+                    <img src="{{ img.image.url|cld_optimize }}"
                          alt="{{ img.alt_text|default:article.title }}"
                          class="img-fluid rounded gallery-img"
                          style="height: 180px; object-fit: cover; width: 100%; cursor: pointer;"
-                         data-src="{{ img.image.url }}"
+                         data-src="{{ img.image.url|cld_optimize }}"
                          data-alt="{{ img.alt_text|default:article.title }}">
                 </div>
                 {% endif %}

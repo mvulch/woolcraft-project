@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load image_filters %}
 {% block title %}Количка | WoolCraft{% endblock %}
 {% block content %}
 <h3 class="fw-bold mb-4 mt-5">Моята количка</h3>
@@ -25,7 +26,7 @@
                            class="text-decoration-none">
                             {% with main_image=item.product.get_main_image %}
                             {% if main_image %}
-                            <img src="{{ main_image.image.url }}"
+                            <img src="{{ main_image.image.url|cld_optimize }}"
                                  alt="{{ item.product.name }}"
                                  class="img-fluid rounded"
                                  style="height: 100px; width: 100px; object-fit: cover;">
@@ -77,8 +78,8 @@
     </div>
 
     <div class="col-12 col-lg-4">
-        <div class="card border-0 shadow-sm sticky-top m-4 p-1" style="top: 130px; z-index: 0; background-color: #e0ebeb; border-radius: 1.5rem;">
-            <div class="card-body" style="background-color: #e0ebeb; border-radius: 1.5rem;">
+        <div class="card border-0 shadow-sm sticky-top info-panel-sticky m-4 p-1" style="top: 130px; z-index: 0;">
+            <div class="card-body info-panel-sticky">
                 <h5 class="fw-bold mb-3">Обобщение</h5>
                 {% for item in items %}
                 <div class="d-flex justify-content-between mb-1 small">
@@ -93,7 +94,7 @@
                 </div>
 
                 {% if user.is_authenticated %}
-                <a href="{% url 'orders:check_out' %}" class="btn btn-success w-100">
+                <a href="{% url 'orders:check_out' %}" class="btn btn-less-brown w-100">
                     <i class="bi bi-credit-card me-1"></i> Към завършване на поръчка
                 </a>
                 {% else %}

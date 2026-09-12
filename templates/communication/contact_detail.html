@@ -18,26 +18,27 @@
 <div class="row g-4">
     <div class="col-12 col-lg-8">
         <!-- original msg -->
-        <div class="chat-row {% if contact_message.user == user %}chat-row-mine{% else %}chat-row-other{% endif %}">
-            <div class="chat-box {% if contact_message.user == user %}chat-box-mine{% else %}chat-box-other{% endif %}">
+        <div class="card product-card shadow-sm p-2 mb-3">
+            <div class="card-body p-3">
                 <div class="d-flex justify-content-between mb-2">
                     <div>
                         {% if contact_message.user == user %}
-                            <p class="fw-medium mb-0">Вашето съобщение</p>
+                            <p class="fw-bold mb-0">Вашето съобщение</p>
                         {% else %}
-                            <p class="fw-medium mb-0">{{ contact_message.user.get_full_name }}</p>
-                            <p class="small mb-0">{{ contact_message.user.email }}</p>
+                            <p class="fw-bold mb-0">{{ contact_message.user.get_full_name }}</p>
+                            <p class="text-muted small mb-0">{{ contact_message.user.email }}</p>
                         {% endif %}
                     </div>
-                    <p class="small mb-0">{{ contact_message.created_at|date:"d.m.Y H:i" }}</p>
+                    <p class="text-muted small mb-0">{{ contact_message.created_at|date:"d.m.Y H:i" }}</p>
                 </div>
                 <p class="mb-0">{{ contact_message.text }}</p>
             </div>
         </div>
 
+        <h4 class="fw-bold text-center mt-5 mb-3">Комуникация</h4>
         {% for reply in contact_message.replies.all %}
         <div class="chat-row {% if reply.user == user %}chat-row-mine{% else %}chat-row-other{% endif %}">
-            <div class="chat-box {% if reply.user == user %}chat-box-mine{% else %}chat-box-other{% endif %}">
+            <div class="chat-box shadow-sm {% if reply.user == user %}chat-box-mine{% elif reply.user.is_staff and reply.user != contact_message.user %}chat-box-other chat-box-staff-other{% else %}chat-box-other{% endif %}">
                 <div class="d-flex justify-content-between mb-2">
                     <p class="fw-medium mb-0">
                         {% if reply.user.is_staff and reply.user != contact_message.user %}
@@ -46,13 +47,13 @@
                             <i class="bi bi-person me-1"></i>{{ reply.user.get_full_name }}
                         {% endif %}
                     </p>
-                    <p class="small mb-0">{{ reply.created_at|date:"d.m.Y H:i" }}</p>
+                    <p class="small mb-0 ms-5">{{ reply.created_at|date:"d.m.Y H:i" }}</p>
                 </div>
                 <p class="mb-0 small">{{ reply.text }}</p>
             </div>
         </div>
         {% empty %}
-        <p class="text-muted small p-2">Все още няма отговори.</p>
+        <p class="text-muted text-center small mb-3">Все още няма отговори.</p>
         {% endfor %}
 
         {% if not contact_message.is_resolved %}
@@ -91,8 +92,8 @@
 
     <!-- information panel -->
     <div class="col-12 col-lg-4">
-        <div class="card border-0 shadow-sm sticky-top p-5" style="top: 80px; z-index: 0;">
-            <div class="card-body" style="background-color: #e0ebeb; border-radius: 1.5rem;">
+        <div class="card border-0 shadow-sm sticky-top info-panel-sticky m-4 p-1" style="top: 130px; z-index: 0;">
+            <div class="card-body info-panel-sticky">
                 <h5 class="fw-bold mb-3">Информация</h5>
                 <div class="row g-2 mb-3">
                         <div class="col-5 text-muted small">Статус:</div>
@@ -111,7 +112,7 @@
                     <form method="post">
                         {% csrf_token %}
                         <input type="hidden" name="action" value="resolve">
-                        <button type="submit" class="btn btn-outline-success w-100"
+                        <button type="submit" class="btn btn-outline-less-brown w-100"
                                 onclick="return confirm('Маркирай като приключено?')">
                             <i class="bi bi-check-lg me-1"></i>Маркирай като приключено
                         </button>

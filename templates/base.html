@@ -41,8 +41,8 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2 profile-dropdown-menu">
                             <li class="px-3 py-2 border-bottom">
-                                <p class="fw-medium mb-0 small">{{ user.get_full_name }}</p>
-                                <p class="text-muted mb-0" style="font-size: 0.75rem;">{{ user.email }}</p>
+                                <p class="fw-medium mb-2 small">{{ user.get_full_name }}</p>
+                                <p class="text-muted mb-1" style="font-size: 0.75rem;">{{ user.email }}</p>
                             </li>
                             <li>
                                 <a class="dropdown-item py-2" href="{% url 'accounts:profile' %}">
@@ -78,6 +78,16 @@
                                 </a>
                             </li>
                             <li>
+                                <a class="dropdown-item py-2" href="{% url 'products:my_courses' %}">
+                                    <i class="bi bi-play-btn me-2"></i>Моите курсове
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item py-2" href="{% url 'orders:address_list' %}">
+                                    <i class="bi bi-geo-alt me-2"></i>Моите адреси
+                                </a>
+                            </li>
+                            <li>
                                 <a class="dropdown-item py-2" href="{% url 'orders:order_list' %}">
                                     <i class="bi bi-bag me-2"></i>Моите поръчки
                                 </a>
@@ -88,18 +98,8 @@
                                 </a>
                             </li>
                             <li>
-                                <a class="dropdown-item py-2" href="{% url 'orders:address_list' %}">
-                                    <i class="bi bi-geo-alt me-2"></i>Моите адреси
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item py-2" href="{% url 'products:my_courses' %}">
-                                    <i class="bi bi-play-btn me-2"></i>Моите курсове
-                                </a>
-                            </li>
-                            <li>
                                 <a class="dropdown-item py-2" href="{% url 'communication:contact_messages_list' %}">
-                                    <i class="bi bi-question-diamond me-2"></i>Моите запитвания
+                                    <i class="bi bi-question-circle me-2"></i>Моите запитвания
                                 </a>
                             </li>
                             <li>
@@ -385,6 +385,18 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="imageZoomModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 bg-transparent">
+            <div class="modal-header border-0 pb-0">
+                <button type="button" class="btn-close bg-white rounded-circle ms-auto" data-bs-dismiss="modal" aria-label="Затвори"></button>
+            </div>
+            <div class="modal-body text-center pt-0">
+                <img id="imageZoomModalImg" src="" alt="" class="img-fluid rounded shadow-lg" style="max-height: 80vh; object-fit: contain;">
+            </div>
+        </div>
+    </div>
+</div>
 {% block extra_js %}
 <script>
     document.querySelectorAll('.shop-trigger').forEach(dropdown => {
@@ -409,6 +421,15 @@
         fetch(`/products/quick-view/${productId}/`)
             .then(r => r.text())
             .then(html => {modalTitle.textContent = btn.dataset.productName || ''; modalBody.innerHTML = html;});
+    });
+</script>
+<script>
+    document.addEventListener('click', function(e) {
+        const img = e.target.closest('.zoomable-img');
+        if (!img) return;
+        document.getElementById('imageZoomModalImg').src = img.src;
+        document.getElementById('imageZoomModalImg').alt = img.alt || '';
+        new bootstrap.Modal(document.getElementById('imageZoomModal')).show();
     });
 </script>
 {% endblock %}
