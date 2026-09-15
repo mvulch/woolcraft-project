@@ -8,7 +8,7 @@ from django.urls import reverse_lazy, reverse
 from django.utils.encoding import force_str
 from django.utils.html import format_html
 from django.utils.http import urlsafe_base64_decode
-from .forms import RegistrationForm, LoginForm
+from .forms import RegistrationForm, LoginForm, PhoneUpdateForm
 from .models import UserNotification
 from .tokens import email_verification_token
 from .utils import send_verification_email
@@ -69,6 +69,18 @@ def login_view(request):
 @login_required
 def profile_view(request):
     return render(request, 'accounts/profile.html', {'user': request.user})
+
+@login_required
+def phone_update_view(request):
+    if request.method == 'POST':
+        form = PhoneUpdateForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Телефонният номер е обновен успешно.')
+            return redirect('accounts:profile')
+    else:
+        form = PhoneUpdateForm(instance=request.user)
+    return render(request, 'accounts/phone_update.html', {'form': form})
 
 class CustomPasswordChangeView(PasswordChangeView):
     template_name = 'accounts/password_change.html'
