@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from orders.models import Address
 from cloudinary.models import CloudinaryField
+from woolCraftProject.validators import USER_IMAGE_TRANSFORMATION
 # Create your models here.
 class CustomRequest(models.Model):
     class Status(models.TextChoices):
@@ -18,7 +19,8 @@ class CustomRequest(models.Model):
     description = models.TextField()
     specific_colors = models.CharField(max_length=80, blank=True)
     size = models.CharField(max_length=80)
-    reference_image = CloudinaryField('Снимка от заявка', resource_type='image', blank=True, null=True)
+    reference_image = CloudinaryField('Основна снимка от заявка', resource_type='image', blank=True, null=True,
+                                       transformation=USER_IMAGE_TRANSFORMATION)
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.PENDING)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -34,9 +36,15 @@ class CustomRequest(models.Model):
     def __str__(self):
         return f'Заявка #{self.id} от {self.user.get_full_name()}'
 
+    def get_reference_image(self):
+        if self.reference_image:
+            return self.reference_image
+        first_extra = next(iter(self.extra_images.all()), None)
+        return first_extra.image if first_extra else None
+
 class CustomRequestImage(models.Model):
     request = models.ForeignKey(CustomRequest, on_delete=models.CASCADE, related_name='extra_images')
-    image = CloudinaryField('Снимка от заявка', resource_type='image')
+    image = CloudinaryField('Снимка от заявка', resource_type='image', transformation=USER_IMAGE_TRANSFORMATION)
     class Meta:
         verbose_name = 'Снимка към заявка'
         verbose_name_plural = 'Снимки към заявки'

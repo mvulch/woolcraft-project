@@ -197,11 +197,8 @@
                     </div>
                 </div>
                 <p class="mb-0 small">{{ review.comment }}</p>
-                {% if review.image or review.extra_images.all %}
+                {% if review.extra_images.all %}
                 <div class="d-flex flex-wrap gap-2 mt-2">
-                    {% if review.image %}
-                    <img src="{{ review.image.url|cld_optimize }}" alt="" class="rounded zoomable-img" style="max-height: 160px;">
-                    {% endif %}
                     {% for img in review.extra_images.all %}
                     <img src="{{ img.image.url|cld_optimize }}" alt="" class="rounded zoomable-img" style="max-height: 160px;">
                     {% endfor %}

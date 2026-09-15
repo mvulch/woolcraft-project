@@ -1,12 +1,12 @@
 :root {
-    --color-msg-mine: #a8cc87;
-    --color-msg-other: #f0dade;
+    --color-msg-mine: #a86254;
+    --color-msg-other: #f7f0eb;
     --color-msg-text: #000000;
 
     --color-navbar-bg: #e8ceb3;
     --color-navbar-second-row-bg: #e8ceb3;
     --color-navbar-third-row-bg: #f2e0cc;
-    --color-offcanvas-tab-bg: #f8ecdd;
+    --color-offcanvas-tab-bg: #f8e9dd;
     --color-navbar-line: #ffffff;
 
     --color-brown: #7a3b2e;
@@ -239,6 +239,27 @@ button[aria-expanded="true"] .rotate-icon {
     align-items: center;
 }
 
+.hero-carousel .hero-slide {
+    background: linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.7)),
+    center/cover no-repeat;
+    min-height: 350px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 3rem 1.5rem;
+}
+.hero-carousel .carousel-control-prev-icon,
+.hero-carousel .carousel-control-next-icon {
+    filter: invert(1);
+    background-color: rgba(0,0,0,0.25);
+    border-radius: 50%;
+    padding: 1rem;
+}
+.hero-carousel .carousel-indicators [data-bs-target] {
+    background-color: var(--color-brown);
+}
+
 .star-rating {
     flex-direction: row-reverse;
 }
@@ -305,6 +326,25 @@ button[aria-expanded="true"] .rotate-icon {
 .product-card {
     background-color: var(--color-card-bg);
     border: 2px solid var(--color-offcanvas-tab-bg) !important;
+}
+
+.page-link {
+    color: var(--color-brown);
+}
+.page-link:hover,
+.page-link:focus {
+    color: var(--color-brown);
+    background-color: var(--color-navbar-third-row-bg);
+    box-shadow: 0 0 0 0.25rem rgba(216, 180, 140, 0.35);
+}
+.page-item.active .page-link,
+.page-item-current .page-link {
+    background-color: var(--color-brown);
+    border-color: var(--color-brown);
+    color: #ffffff;
+}
+.page-item.disabled .page-link {
+    color: #adb5bd;
 }
 
 .zoomable-img {
@@ -375,6 +415,10 @@ button[aria-expanded="true"] .rotate-icon {
 
 .carousel-wrapper {
     overflow: visible;
+}
+.carousel-products-row {
+    flex-wrap: nowrap;
+    overflow: hidden;
 }
 #productsCarousel .carousel-control-prev {
     width: auto;

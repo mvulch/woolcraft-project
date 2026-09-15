@@ -19,6 +19,9 @@ logger = logging.getLogger(__name__)
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
+def custom_request_info_view(request):
+    return render(request, 'custom_requests/custom_request_info.html')
+
 @login_required
 def custom_request_create_view(request):
     if request.method == 'POST':
@@ -26,8 +29,11 @@ def custom_request_create_view(request):
         if form.is_valid():
             custom_request = form.save(commit=False)
             custom_request.user = request.user
+            images = form.cleaned_data.get('images', [])
+            if images:
+                custom_request.reference_image = images[0]
             custom_request.save()
-            for image in form.cleaned_data.get('images', []):
+            for image in images[1:]:
                 CustomRequestImage.objects.create(request=custom_request, image=image)
             notify_staff(
                 type=Notification.Type.NEW_REQUEST,

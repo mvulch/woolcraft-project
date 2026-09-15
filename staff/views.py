@@ -233,7 +233,7 @@ def course_questions_view(request):
 @staff_required
 def custom_requests_list_view(request):
     filter_status = request.GET.get('status','')
-    custom_requests = CustomRequest.objects.select_related('user').order_by('-created_at')
+    custom_requests = CustomRequest.objects.select_related('user').prefetch_related('extra_images').order_by('-created_at')
     if filter_status:
         custom_requests = custom_requests.filter(status=filter_status)
     paginator = Paginator(custom_requests, settings.PAGE_ITEMS)

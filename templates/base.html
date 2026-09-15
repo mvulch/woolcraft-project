@@ -314,13 +314,14 @@
             <!-- 2 -->
             <div class="col-12 col-md-4">
                 <h5 class="text-uppercase text-light mb-2 fs-6 pb-2 border-bottom d-inline-block">
-                    Често задавани въпроси
+                    Полезна информация
                 </h5>
                 <ul class="list-unstyled small">
-                    <li class="mb-1"><a href="#" class="text-white-50 text-decoration-none hover-link">Въпрос 1</a></li>
-                    <li class="mb-1"><a href="#" class="text-white-50 text-decoration-none hover-link">Въпрос 2</a></li>
-                    <li class="mb-1"><a href="#" class="text-white-50 text-decoration-none hover-link">Въпрос 3</a></li>
-                    <li class="mb-1"><a href="#" class="text-white-50 text-decoration-none hover-link">Въпрос 4</a></li>
+                    <li class="mb-1"><a href="{% url 'communication:shipping_info' %}" class="text-white-50 text-decoration-none hover-link">Доставка и плащане</a></li>
+                    <li class="mb-1"><a href="{% url 'communication:returns_policy' %}" class="text-white-50 text-decoration-none hover-link">Връщане и рекламации</a></li>
+                    <li class="mb-1"><a href="{% url 'custom_requests:custom_request_info' %}" class="text-white-50 text-decoration-none hover-link">Персонализирани заявки</a></li>
+                    <li class="mb-1"><a href="{% url 'communication:privacy_policy' %}" class="text-white-50 text-decoration-none hover-link">Поверителност и бисквитки</a></li>
+                    <li class="mb-1"><a href="{% url 'communication:terms_of_use' %}" class="text-white-50 text-decoration-none hover-link">Общи условия</a></li>
                 </ul>
             </div>
 

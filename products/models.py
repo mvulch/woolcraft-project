@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.db.models import Avg
 from cloudinary.models import CloudinaryField
+from woolCraftProject.validators import USER_IMAGE_TRANSFORMATION
 
 
 # Create your models here.
@@ -91,7 +92,6 @@ class ProductReview(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='reviews')
     rating = models.PositiveSmallIntegerField()
     comment = models.TextField(blank=True)
-    image = CloudinaryField('Снимка към отзив', resource_type='image', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     is_published = models.BooleanField(default=False)
     is_rejected = models.BooleanField(default=False)
@@ -106,7 +106,7 @@ class ProductReview(models.Model):
 
 class ProductReviewImage(models.Model):
     review = models.ForeignKey(ProductReview, on_delete=models.CASCADE, related_name='extra_images')
-    image = CloudinaryField('Снимка към отзив', resource_type='image')
+    image = CloudinaryField('Снимка към отзив', resource_type='image', transformation=USER_IMAGE_TRANSFORMATION)
     class Meta:
         verbose_name = 'Снимка към отзив'
         verbose_name_plural = 'Снимки към отзиви'
@@ -176,7 +176,8 @@ class CourseQuestion(models.Model):
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, related_name='questions')
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='course_questions')
     text = models.TextField(max_length=1000, verbose_name='Въпрос')
-    image = CloudinaryField('Снимка', resource_type='image', blank=True, null=True)
+    image = CloudinaryField('Снимка', resource_type='image', blank=True, null=True,
+                             transformation=USER_IMAGE_TRANSFORMATION)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -192,7 +193,8 @@ class CourseQuestionReply(models.Model):
     question = models.ForeignKey(CourseQuestion, on_delete=models.CASCADE, related_name='replies')
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='course_question_replies')
     text = models.TextField(max_length=1000, verbose_name='Отговор')
-    image = CloudinaryField('Снимка', resource_type='image', blank=True, null=True)
+    image = CloudinaryField('Снимка', resource_type='image', blank=True, null=True,
+                             transformation=USER_IMAGE_TRANSFORMATION)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

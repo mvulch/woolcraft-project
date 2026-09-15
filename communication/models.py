@@ -71,6 +71,23 @@ class ChatSession(models.Model):
     def __str__(self):
         return f"Session {self.id} - {self.user.email}"
 
+class HeroSlide(models.Model):
+    title = models.CharField(max_length=120, verbose_name='Заглавие')
+    subtitle = models.CharField(max_length=200, blank=True, verbose_name='Подзаглавие')
+    image = CloudinaryField('Снимка на банер', resource_type='image')
+    button_text = models.CharField(max_length=40, blank=True, verbose_name='Текст на бутон')
+    button_url = models.CharField(max_length=200, blank=True, verbose_name='Линк на бутон')
+    order = models.PositiveIntegerField(default=1, verbose_name='Ред')
+    is_active = models.BooleanField(default=True, verbose_name='Активен')
+
+    class Meta:
+        ordering = ['order']
+        verbose_name = 'Банер на начална страница'
+        verbose_name_plural = 'Банери на начална страница'
+
+    def __str__(self):
+        return self.title
+
 class ChatMessage(models.Model):
     chat_session = models.ForeignKey(ChatSession,on_delete=models.CASCADE, related_name="messages")
     text = models.TextField(blank=False)

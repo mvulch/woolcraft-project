@@ -64,7 +64,7 @@
                         {% endif %}
                     </td>
                     <td>
-                        {% if review.image or review.extra_images.all %}
+                        {% if review.extra_images.all %}
                             <i class="bi bi-check-circle-fill text-success ms-5"></i>
                         {% else %}
                             <i class="bi bi-x-circle text-danger ms-5"></i>
@@ -95,7 +95,7 @@
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="7" class="text-center text-muted py-4">Няма коментари.</td>
+                    <td colspan="8" class="text-center text-muted py-4">Няма коментари.</td>
                 </tr>
                 {% endfor %}
             </tbody>

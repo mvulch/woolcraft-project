@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Доставка и плащане | WoolCraft{% endblock %}
+{% block content %}
+<div class="row mb-5">
+    <div class="col-12 col-lg-8 mx-auto">
+        <h1 class="display-6 fw-bold less-brown-title mb-4 text-center">Доставка и плащане</h1>
+        <h3 class="fw-bold text-dark border-bottom section-divider border-3 pb-2 mb-3">Плащане</h3>
+        <p class="mb-4">
+            Плащанията в сайта се обработват онлайн с карта през сигурната платформа на Stripe.
+            Данните на картата се въвеждат директно в защитената страница на Stripe и не преминават
+            и не се съхраняват на сървърите ни.
+        </p>
+        <h3 class="fw-bold text-dark border-bottom section-divider border-3 pb-2 mb-3">Доставка на готови продукти</h3>
+        <p class="mb-4">
+            След изпращане статусът на поръчката се обновява и можеш да го проследиш в „Моите поръчки“.
+        </p>
+        <h3 class="fw-bold text-dark border-bottom section-divider border-3 pb-2 mb-3">Доставка на персонализирани поръчки</h3>
+        <p class="mb-4">
+            При персонализирана заявка срокът за изработка и доставка зависи от сложността на изделието и се
+            уточнява индивидуално с екипа след приемане на предложената цена. Повече за целия процес виж в
+            <a href="{% url 'custom_requests:custom_request_info' %}" class="less-brown-title text-decoration-none">
+                как се случва изпълнението на персонализирана заявка</a>.
+        </p>
+        <h3 class="fw-bold text-dark border-bottom section-divider border-3 pb-2 mb-3">Потвърждение на поръчката</h3>
+        <p class="mb-0">
+            Вие получавате известие в профила си след успешно плащане, а статусът на поръчката/заявката е винаги видим
+            в секциите „Моите поръчки“ и „Моите заявки“.
+        </p>
+    </div>
+</div>
+{% endblock %}

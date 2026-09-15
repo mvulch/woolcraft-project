@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Общи условия | WoolCraft{% endblock %}
+{% block content %}
+<div class="row mb-5">
+    <div class="col-12 col-lg-8 mx-auto">
+        <h1 class="display-6 fw-bold less-brown-title mb-4 text-center">Общи условия</h1>
+        <h3 class="fw-bold text-dark border-bottom section-divider border-3 pb-2 mb-3">Какво предлагаме</h3>
+        <p class="mb-4">
+            WoolCraft е онлайн платформа за ръчно изработени изделия от вълна. През сайта можете да поръчате готови
+            продукти от магазина, да подадете персонализирани заявки за изделие по своя идея, както и да закупите
+            достъп до видео курсове.
+        </p>
+        <h3 class="fw-bold text-dark border-bottom section-divider border-3 pb-2 mb-3">Регистрация и профил</h3>
+        <p class="mb-4">
+            За да завършите поръчка, да ни изпратите персонализирана заявка или да гледате своите закупени видео курсове, е необходимо
+            да се регистрирате и да влезете в своя профил. Отговорността за точността на данните, които подавате, е Ваша.
+        </p>
+        <h3 class="fw-bold text-dark border-bottom section-divider border-3 pb-2 mb-3">Поръчки и плащане</h3>
+        <p class="mb-4">
+            Поръчките се потвърждават след успешно плащане онлайн през Stripe. Цените на продуктите са показани
+            в сайта преди завършване на поръчката. За персонализирани заявки цената се съгласува индивидуално —
+            вижте <a href="{% url 'custom_requests:custom_request_info' %}" class="less-brown-title text-decoration-none">
+                как се случва изпълнението на персонализирана заявка</a>.
+        </p>
+        <h3 class="fw-bold text-dark border-bottom section-divider border-3 pb-2 mb-3">Видео курсове</h3>
+        <p class="mb-4">
+            Достъпът до видео курс е обвързан с профила, с който е закупен, и е само за лично ползване.
+            Материалите не могат да се копират, споделят или разпространяват.
+        </p>
+        <h3 class="fw-bold text-dark border-bottom section-divider border-3 pb-2 mb-3">Връщане и рекламации</h3>
+        <p class="mb-4">
+            Условията за връщане на готови продукти и персонализирани поръчки са описани в
+            <a href="{% url 'communication:returns_policy' %}" class="less-brown-title text-decoration-none">
+                политиката за връщане и рекламации</a>.
+        </p>
+        <h3 class="fw-bold text-dark border-bottom section-divider border-3 pb-2 mb-3">Приложимо право</h3>
+        <p class="mb-0">
+            Настоящите условия се уреждат от законодателството на Република България. За въпроси или спорове
+            се свържи с нас през <a href="{% url 'communication:create_contact' %}" class="less-brown-title text-decoration-none">формата за контакт</a>.
+        </p>
+    </div>
+</div>
+{% endblock %}

@@ -109,3 +109,15 @@ def article_list_view(request):
 def article_detail_view(request, slug):
     article = get_object_or_404(Article.objects.prefetch_related('images'), slug=slug, is_published=True)
     return render(request, 'communication/article_detail.html', {'article':article})
+
+def shipping_info_view(request):
+    return render(request, 'communication/shipping_info.html')
+
+def returns_policy_view(request):
+    return render(request, 'communication/returns_policy.html')
+
+def privacy_policy_view(request):
+    return render(request, 'communication/privacy_policy.html')
+
+def terms_of_use_view(request):
+    return render(request, 'communication/terms_of_use.html')

@@ -1,8 +1,9 @@
 from django import forms
 from django.core.files.uploadedfile import UploadedFile
 
-MAX_IMAGE_SIZE = 5 * 1024 * 1024
+MAX_IMAGE_SIZE = 10 * 1024 * 1024
 ALLOWED_IMAGE_TYPES = ('image/jpeg', 'image/png', 'image/webp')
+USER_IMAGE_TRANSFORMATION = [{'width': 1600, 'height': 1600, 'crop': 'limit'}]
 
 class MultipleFileInput(forms.ClearableFileInput):
     allow_multiple_selected = True

@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Поверителност и бисквитки | WoolCraft{% endblock %}
+{% block content %}
+<div class="row mb-5">
+    <div class="col-12 col-lg-8 mx-auto">
+        <h1 class="display-6 fw-bold less-brown-title mb-4 text-center">Поверителност и бисквитки</h1>
+        <h3 class="fw-bold text-dark border-bottom section-divider border-3 pb-2 mb-3">Какви данни събираме</h3>
+        <p class="mb-4">
+            При регистрация и поръчка събираме само данните, необходими за изпълнение на поръчката или заявката:
+            име, имейл, телефон и адрес за доставка. Не събираме и не съхраняваме данни за платежната ти карта —
+            плащанията се обработват изцяло от Stripe.
+        </p>
+        <h3 class="fw-bold text-dark border-bottom section-divider border-3 pb-2 mb-3">Бисквитки</h3>
+        <p class="mb-4">
+            Сайтът използва единствено технически необходими бисквитки — за поддържане на сесията ти (влизане в
+            профила, съдържание на количката) и за защита срещу CSRF атаки. Бисквитките не се използват за
+            анализ, реклама или проследяване, затова не изискваме съгласие за бисквитки — стриктно необходимите
+            бисквитки са позволени по закон без изричното съгласие на потребителя.
+        </p>
+        <h3 class="fw-bold text-dark border-bottom section-divider border-3 pb-2 mb-3">Споделяне на данни с трети страни</h3>
+        <p class="mb-4">
+            Данните Ви се споделят само с доставчици, необходими за изпълнение на поръчката — платежния оператор
+            Stripe (за обработка на плащането). Не продаваме и не предоставяме данни за маркетингови цели на трети страни.
+        </p>
+        <h3 class="fw-bold text-dark border-bottom section-divider border-3 pb-2 mb-3">Твоите права</h3>
+        <p class="mb-0">
+            Можеш да поискате достъп, корекция или изтриване на своите лични данни по всяко време през
+            <a href="{% url 'communication:create_contact' %}" class="less-brown-title text-decoration-none">формата за контакт</a>
+            или чрез настройките на профила си.
+        </p>
+    </div>
+</div>
+{% endblock %}

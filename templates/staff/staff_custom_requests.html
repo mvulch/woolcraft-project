@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load image_filters %}
 {% block title %}Персонализирани заявки | Служителски панел{% endblock %}
 {% block content %}
 <div class="d-flex justify-content-between align-items-center my-5">
@@ -28,6 +29,7 @@
             <thead class="table-light">
                 <tr>
                     <th>#</th>
+                    <th>Снимка</th>
                     <th>Потребител</th>
                     <th>Заглавие</th>
                     <th>Дата</th>
@@ -39,6 +41,16 @@
                 {% for custom_request in page_obj %}
                 <tr>
                     <td class="text-muted small">#{{ custom_request.id }}</td>
+                    <td>
+                        {% with thumb=custom_request.get_reference_image %}
+                        {% if thumb %}
+                        <img src="{{ thumb.url|cld_optimize }}" alt="Снимка на заявка #{{ custom_request.id }}"
+                             class="rounded" style="width: 48px; height: 48px; object-fit: cover;">
+                        {% else %}
+                        <i class="bi bi-image text-muted fs-4"></i>
+                        {% endif %}
+                        {% endwith %}
+                    </td>
                     <td>
                         <p class="mb-0">{{ custom_request.user.get_full_name }}</p>
                         <p class="text-muted small mb-0">{{ custom_request.user.email }}</p>
@@ -57,7 +69,7 @@
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="6" class="text-center text-muted py-4">Няма заявки.</td>
+                    <td colspan="7" class="text-center text-muted py-4">Няма заявки.</td>
                 </tr>
                 {% endfor %}
             </tbody>

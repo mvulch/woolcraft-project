@@ -11,7 +11,7 @@ from django.contrib import messages
 from staff.models import Notification
 from accounts.utils import notify_user
 from accounts.models import UserNotification
-from communication.models import Article
+from communication.models import Article, HeroSlide
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 
@@ -25,6 +25,7 @@ MONTH_TO_SEASON = {
 
 # Create your views here.
 def home_view(request):
+    hero_slides = HeroSlide.objects.filter(is_active=True)
     latest_products = Product.objects.filter(is_active=True).order_by('-created_at').prefetch_related('images')[:8]
     recommended_articles = Article.objects.filter(is_published=True).order_by('-created_at').prefetch_related('images')[:4]
     current_season = MONTH_TO_SEASON[timezone.now().month]
@@ -32,6 +33,7 @@ def home_view(request):
         is_active=True, season__in=[current_season]
     ).order_by('-created_at').prefetch_related('images')[:4]
     return render(request, 'home.html', {
+        'hero_slides': hero_slides,
         'latest_products': latest_products,
         'recommended_articles': recommended_articles,
         'seasonal_products': seasonal_products,
@@ -270,7 +272,7 @@ def course_watch_view(request, course_id, lesson_id=None):
         current_lesson = lessons[0] if lessons else None
 
     has_access = request.user.is_authenticated and (
-        request.user.is_staff or OrderItem.objects.filter(
+        request.user.is_superuser or OrderItem.objects.filter(
             order__user=request.user,
             product=course.product,
             order__status__in=(Order.OrderStatus.PAID, Order.OrderStatus.SHIPPED, Order.OrderStatus.DELIVERED),

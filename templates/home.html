@@ -1,11 +1,46 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load image_filters %}
 {% block title %}WoolCraft{% endblock %}
 {% block content %}
+<!-- hero banner -->
 <div class="row mb-5">
     <div class="col-12">
+        {% if hero_slides %}
+        <div id="heroCarousel" class="carousel slide hero-carousel rounded shadow-sm overflow-hidden" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                {% for slide in hero_slides %}
+                <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                    <div class="hero-slide text-center" style="background-image: url('{{ slide.image.url|cld_optimize }}');">
+                        <h1 class="display-4 fw-bold less-brown-title mb-3">{{ slide.title }}</h1>
+                        {% if slide.subtitle %}
+                        <p class="col-lg-6 mx-auto fs-5 text-muted mb-4">{{ slide.subtitle }}</p>
+                        {% endif %}
+                        {% if slide.button_text %}
+                        <a href="{{ slide.button_url|default:'/' }}" class="btn btn-less-brown btn-lg px-4 gap-3 fw-medium text-uppercase shadow-sm">
+                            {{ slide.button_text }}</a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% if hero_slides|length > 1 %}
+            <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon"></span>
+            </button>
+            <div class="carousel-indicators">
+                {% for slide in hero_slides %}
+                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="{{ forloop.counter0 }}"
+                        class="{% if forloop.first %}active{% endif %}"></button>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        {% else %}
         <div class="p-5 text-center bg-light rounded shadow-sm banner-section">
-            <!-- <div class="banner-section" style="background-image: url('/static/images/banner-test.jpg');"> -->
             <h1 class="display-4 fw-bold less-brown-title mb-3">Топлина и стил от природата</h1>
             <p class="col-lg-6 mx-auto fs-5 text-muted mb-4">
                 Открий колекция от продукти, създадени с любов и грижа.
@@ -13,13 +48,30 @@
             <a href="{% url 'products:all_products' %}" class="btn btn-less-brown btn-lg px-4 gap-3 fw-medium text-uppercase shadow-sm">
                 Разгледай продуктите</a>
         </div>
+        {% endif %}
     </div>
 </div>
+
+<!-- Seasonal products -->
+{% if seasonal_products %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h3 class="fw-bold text-dark border-bottom section-divider border-3 pb-2 mb-0">{{ current_season_label }} колекция</h3>
+    </div>
+</div>
+<div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4 mb-5">
+    {% for product in seasonal_products %}
+    <div class="col">
+        {% include 'includes/product_card.html' %}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
 
 <!-- Recommended categories -->
 <div class="row mb-4">
     <div class="col-12">
-        <h3 class="fw-bold text-dark border-bottom border-success border-3 pb-2 mb-0">Популярни категории</h3>
+        <h3 class="fw-bold text-dark border-bottom section-divider border-3 pb-2 mb-0">Популярни категории</h3>
     </div>
 </div>
 
@@ -28,7 +80,7 @@
     <div class="col-6 col-md-3">
         <div class="card h-100 border-0 shadow-sm text-center custom-hover-dropdown overflow-hidden">
             {% if category.image %}
-            <img src="{{ category.image.url }}" class="card-img-top" alt="{{ category.name }}"
+            <img src="{{ category.image.url|cld_optimize }}" class="card-img-top" alt="{{ category.name }}"
                  style="height: 180px; object-fit: cover;">
             {% else %}
             <div class="bg-secondary-subtle d-flex align-items-center justify-content-center" style="height: 180px;">
@@ -52,7 +104,7 @@
 <!-- Latest products -->
 <div class="row mb-4">
     <div class="col-12">
-        <h3 class="fw-bold text-dark border-bottom border-success border-3 pb-2 mb-0">Най-нови продукти</h3>
+        <h3 class="fw-bold text-dark border-bottom section-divider border-3 pb-2 mb-0">Най-нови продукти</h3>
     </div>
 </div>
 <div class="carousel-wrapper">
@@ -62,9 +114,9 @@
             {% for product in latest_products %}
             {% if forloop.counter0|divisibleby:4 %}
             <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                <div class="row g-3 px-4">
+                <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4 px-4 carousel-products-row">
             {% endif %}
-                    <div class="col-6 col-md-3">
+                    <div class="col">
                         {% include 'includes/product_card.html' %}
                     </div>
             {% if forloop.counter|divisibleby:4 or forloop.last %}
@@ -90,7 +142,7 @@
 <!-- Articles -->
 <div class="row mb-4">
     <div class="col-12">
-        <h3 class="fw-bold text-dark border-bottom border-success border-3 pb-2 mb-0">Последни статии</h3>
+        <h3 class="fw-bold text-dark border-bottom section-divider border-3 pb-2 mb-0">Последни статии</h3>
     </div>
 </div>
 
@@ -98,10 +150,10 @@
 <div class="row g-4 mb-5">
     {% for article in recommended_articles %}
     <div class="col-12 col-sm-6 col-lg-3">
-        <div class="card h-100 border-0 shadow-sm">
+        <div class="card h-100 border-0 shadow-sm article-card">
             {% with main_image=article.get_main_image %}
                 {% if main_image %}
-                    <img src="{{ main_image.image.url }}"
+                    <img src="{{ main_image.image.url|cld_optimize }}"
                          alt="{{ article.title }}"
                          class="card-img-top"
                          style="height: 180px; object-fit: cover;">
