@@ -32,16 +32,14 @@
     <div class="col-12 col-lg-6">
         {% with main_image=product.get_main_image %}
         {% if main_image %}
-        <div class="bg-light rounded d-flex align-items-center justify-content-center"
-             style="height:550px; width: 100%;">
+        <div class="bg-light rounded overflow-hidden" style="aspect-ratio: 1 / 1; width: 100%;">
             <img src="{{ main_image.image.url|cld_optimize }}"
-                 class="card-img-top"
                  alt="{{ product.name }}"
-                 style="max-height: 100%; max-width: 100%; object-fit: contain;"
+                 style="width: 100%; height: 100%; object-fit: cover;"
                  id="main-product-img">
         </div>
         {% if product.images.all.count > 1 %}
-        <div class="d-flex gap-2 mt-2 flex-wrap">
+        <div class="d-flex gap-2 mt-3 pt-3 border-top flex-wrap">
             {% for img in product.images.all %}
             <img src="{{ img.image.url|cld_optimize }}"
                  alt="{{ img.alt_text|default:product.name }}"
@@ -53,7 +51,7 @@
         {% endif %}
         {% else %}
         <div class="bg-light rounded d-flex align-items-center justify-content-center"
-             style="height: 500px;">
+             style="aspect-ratio: 1 / 1; width: 100%;">
             <i class="bi bi-image text-muted" style="font-size: 4rem;"></i>
         </div>
         {% endif %}

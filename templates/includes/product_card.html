@@ -4,7 +4,7 @@
         <a href="{% url 'products:product_detail' product.category.slug product.slug %}" class="text-decoration-none d-block">
             {% with main_image=product.get_main_image %}
                 {% if main_image %}
-                    <img src="{{ main_image.image.url|cld_optimize }}" class="rounded bg-light" alt="{{ product.name }}" style="height: 280px; width: 100%; object-fit: contain;">
+                    <img src="{{ main_image.image.url|cld_optimize }}" class="rounded bg-light" alt="{{ product.name }}" style="height: 280px; width: 100%; object-fit: cover;">
                 {% else %}
                     <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height: 280px;">
                         <i class="bi bi-tag text-muted fs-1"></i>
